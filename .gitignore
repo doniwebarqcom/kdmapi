@@ -1,3 +1,4 @@
 .env
+/packages/logs
+/storage
 /vendor
-/packages

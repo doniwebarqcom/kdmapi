@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Member;
+use Kodami\Models\Mysql\Member;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\JWTAuth;
 use Validator;

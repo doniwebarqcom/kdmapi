@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Member;
+use Kodami\Models\Mysql\Member;
+use Kodami\Models\Test;
 
 class ExampleController extends ApiController
 {
 
     public function index()
     {
-    	return Member::get();
+    	$data = Member::get();
+   		return $data;
     }
 
 }

@@ -47,6 +47,7 @@ $app->routeMiddleware([
 
 $app->register(Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class);
 $app->register(\Barryvdh\Cors\LumenServiceProvider::class);
+$app->register(Kodami\Models\ModelServiceProvider::class);
 
 
 /*
