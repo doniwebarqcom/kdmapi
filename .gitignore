@@ -1,4 +1,4 @@
 .env
-/packages/logs
-/storage
+/packages
+/storage/logs
 /vendor
