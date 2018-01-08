@@ -1204,12 +1204,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/akhamatvarokah/kodami-package.git",
-                "reference": "fd8c89b459d0a4a8594e009bddd3b8b00264bf80"
+                "reference": "3a66b7031fc14e2a6ea261d28fd8ab21b7eade9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/akhamatvarokah/kodami-package/zipball/fd8c89b459d0a4a8594e009bddd3b8b00264bf80",
-                "reference": "fd8c89b459d0a4a8594e009bddd3b8b00264bf80",
+                "url": "https://api.github.com/repos/akhamatvarokah/kodami-package/zipball/3a66b7031fc14e2a6ea261d28fd8ab21b7eade9f",
+                "reference": "3a66b7031fc14e2a6ea261d28fd8ab21b7eade9f",
                 "shasum": ""
             },
             "require": {
@@ -1238,7 +1238,7 @@
                 }
             ],
             "description": "it's models kodami aplication",
-            "time": "2018-01-04 02:59:14"
+            "time": "2018-01-08 01:23:37"
         },
         {
             "name": "laravel/lumen-framework",

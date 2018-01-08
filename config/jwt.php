@@ -64,7 +64,7 @@ return [
     |
     */
 
-    'user' => \Kodami\Models\Mysql::class,
+    'user' => \Kodami\Models\Mysql\Member::class,
 
     /*
     |--------------------------------------------------------------------------

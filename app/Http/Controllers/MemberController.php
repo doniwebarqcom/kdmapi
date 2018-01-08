@@ -66,20 +66,18 @@ class MemberController extends ApiController
 			return $this->response()->error($validator->errors()->all());
 
 		$password = $this->request->get('password');
-		$Member = "";
-		
+		$Member = "";		
 		if($username == "" )
 		{
-
 			$Member = Member::where('email', $email)->first();
 
-		} elseif($password == "" ) {
+		} elseif($email == "" ) {
 
 			$Member = Member::Where('username', $username)->first();
 
 		}
 
-		if( ! (Hash::check($password, $Member->password)))
+		if( ! $Member OR ! (Hash::check($password, $Member->password)))
 			return $this->response()->error("Wrong username or email or password");
 
 		$token = $JWTAuth->fromUser($Member);
