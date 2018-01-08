@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Kodami\Models\Mysql\Subscriber;
-use Illuminate\Support\Facades\Hash;
-use Tymon\JWTAuth\JWTAuth;
 use Validator;
 
 class SubscriberController extends ApiController

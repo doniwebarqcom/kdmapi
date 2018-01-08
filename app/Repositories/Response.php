@@ -36,7 +36,6 @@ class Response extends ResponseFactory
      * @param int   $options
      *
      * @return SymfonyResponse
-     * @author Fathur Rohman <fathur@dragoncapital.center>
      */
     public function success($data, array $attribute = [], $status = 200, $transformer = true, $serializer = null, array $headers = [], $options = 0)
     {
@@ -60,8 +59,7 @@ class Response extends ResponseFactory
      *
      * @param int    $header_status
      *
-     * @return SymfonyResponse
-     * @author   Fathur Rohman <fathur@dragoncapital.center>
+     * @return SymfonyResponse\
      */
     public function error($message, $response_status = 400, $header_status = 400, array $headers = [], $options = 0)
     {

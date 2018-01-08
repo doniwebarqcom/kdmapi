@@ -10,3 +10,4 @@ $router->post('member/register', ['uses' => 'MemberController@register', 'middle
 $router->post('member/login', ['uses' => 'MemberController@login', 'middleware' => ['cors']]);
 $router->post('subscribe', ['uses' => 'SubscriberController@index', 'middleware' => ['cors']]);
 $router->post('unsubscribe', ['uses' => 'SubscriberController@delete', 'middleware' => ['cors']]);
+$router->get('category', ['uses' => 'CategoryController@index', 'middleware' => ['cors']]);
