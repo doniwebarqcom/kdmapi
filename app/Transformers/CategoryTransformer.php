@@ -18,6 +18,7 @@ class CategoryTransformer extends TransformerAbstract
             'slug'          => $Category->slug,
             'permalink'     => $Category->permalink,
             'description'   => $Category->description,
+            'image'         => $Category->image,
         ];
 
         if ($Category->has_children == 1 AND isset($Category->children)) {

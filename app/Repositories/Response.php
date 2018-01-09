@@ -90,14 +90,10 @@ class Response extends ResponseFactory
         ];
 
         $meta = [
-            'token_jwt'     => array_key_exists('meta.token', $attribute) ? $attribute['meta.token'] : null,
+            'token'     => array_key_exists('meta.token', $attribute) ? $attribute['meta.token'] : null,
             'language'  => array_key_exists('meta.language', $attribute) ? $attribute['meta.language'] : app('translator')->getLocale(),
             'timestamp' => array_key_exists('meta.timestamp', $attribute) ? $attribute['meta.timestamp'] : Carbon::now()->timestamp
         ];
-
-        // if (env('APP_DEBUG') and env('APP_ENV') != 'testing') {
-        //     $meta['debug'] = \DB::getQueryLog();
-        // }
 
         $response = [
             'status' => $status,
