@@ -18,7 +18,7 @@ class MemberController extends ApiController
                 'email' 	=> 'required|email|unique:members,email',
                 'username' 	=> 'required|unique:members,username',
                 'password' 	=> 'required|alpha_num|between:6,12',
-                'address' 	=> 'required',
+                'address' 	=> '',
                 'phone' 	=> 'required'
         ];
 
