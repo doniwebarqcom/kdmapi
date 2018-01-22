@@ -2,11 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Transformers\Serializers\CiayoSerializer;
+use App\Repositories\CostumeDataArraySerializer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Http\ResponseFactory;
 use League\Fractal\Manager;
+use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class Response extends ResponseFactory
@@ -31,20 +33,25 @@ class Response extends ResponseFactory
      * @param array $attribute
      * @param int   $status
      * @param bool  $transformer
-     * @param null  $serializer
+     * @param null  $typeData
      * @param array $headers
      * @param int   $options
      *
      * @return SymfonyResponse
      */
-    public function success($data, array $attribute = [], $status = 200, $transformer = true, $serializer = null, array $headers = [], $options = 0)
+    public function success($data, array $attribute = [], $status = 200, $transformer = null, $typeData = null, $costumeData = null, $transformInclude = [], array $headers = [], $options = 0)
     {
 
         if (!array_key_exists('Cache-Control', $headers)) {
             $headers['Cache-Control'] = 'max-age=604800'; 
         }
-
-        $response = $this->generateStructureNonTransformer($data, $attribute);
+        
+        
+        if($transformer != null AND $typeData != null)
+            $response = $this->generateStructureTransformer($data, $attribute, $typeData, $transformer, $costumeData, $transformInclude);
+        else
+            $response = $this->generateStructureNonTransformer($data, $attribute);
+        
 
         return $this->json($response, $status, $headers, $options);
     }
@@ -98,6 +105,51 @@ class Response extends ResponseFactory
         $response = [
             'status' => $status,
             'data'   => $data,
+            'meta'   => $meta
+        ];
+
+        return $response;
+    }
+
+    /**
+     * @param       $data
+     * @param array $attribute
+     *
+     * @return array
+     */
+    private function generateStructureTransformer($data, array $attribute, $typeData = null, $transformer = null, $costumeData = null, $transformInclude = [])
+    {
+        $status = [
+            'error'   => array_key_exists('status.error', $attribute) ? $attribute['status.error'] : false,
+            'message' => array_key_exists('status.message', $attribute) ? $attribute['status.message'] : null,
+            'code'    => array_key_exists('status.code', $attribute) ? $attribute['status.code'] : SymfonyResponse::HTTP_OK,
+
+        ];
+
+        $meta = [
+            'token'     => array_key_exists('meta.token', $attribute) ? $attribute['meta.token'] : null,
+            'language'  => array_key_exists('meta.language', $attribute) ? $attribute['meta.language'] : app('translator')->getLocale(),
+            'timestamp' => array_key_exists('meta.timestamp', $attribute) ? $attribute['meta.timestamp'] : Carbon::now()->timestamp
+        ];
+
+        if(isset($data) AND $typeData != null AND $transformer != null)
+        {
+            $manager = new Manager();
+            $manager->parseIncludes($transformInclude);
+            $manager->setSerializer(new CostumeDataArraySerializer($costumeData));
+            if($typeData == 'item')
+                $resource = new Item($data, $transformer);
+            else
+                $resource = new Collection($data, $transformer);
+
+            $result =  $manager->createData($resource)->toArray();
+
+        } else 
+            $result = "";
+
+        $response = [
+            'status' => $status,
+            'data'   => $result,
             'meta'   => $meta
         ];
 

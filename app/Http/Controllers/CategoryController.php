@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Transformers\CategoryTransformer;
+use App\Transformers\CategoryInSearchTransformer;
 use App\Repositories\CostumeDataArraySerializer;
 use Kodami\Models\Mysql\Category;
 use League\Fractal;
@@ -15,13 +16,13 @@ class CategoryController extends ApiController
 	{
 		$Category = Category::where('active', 1)->where('parent_id', 0)->orderBy('order_num', 'ASC')->get();
 		$data = [];
-		if($Category) {
-            $manager = new Manager();
-            $manager->setSerializer(new CostumeDataArraySerializer());
-            $resource = new Collection($Category, new CategoryTransformer());
-            $data =  $manager->createData($resource)->toArray();
-        }
+		return $this->response()->success($Category, [] , 200, new CategoryTransformer(), 'collection');;
+	}
 
-        return $this->response()->success($data);
+	public function search()
+	{
+		$Category = Category::where('active', 1)->where('parent_id', 0)->where('has_children', 1)->orderBy('order_num', 'ASC')->limit(5)->get();
+		$data = [];
+		return $this->response()->success($Category, [] , 200, new CategoryInSearchTransformer(), 'collection', null, ['sub_category']);
 	}
 }

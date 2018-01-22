@@ -11,3 +11,4 @@ $router->post('member/login', ['uses' => 'MemberController@login', 'middleware' 
 $router->post('subscribe', ['uses' => 'SubscriberController@index', 'middleware' => ['cors']]);
 $router->post('unsubscribe', ['uses' => 'SubscriberController@delete', 'middleware' => ['cors']]);
 $router->get('category', ['uses' => 'CategoryController@index', 'middleware' => ['cors']]);
+$router->get('category-insearch', ['uses' => 'CategoryController@search', 'middleware' => ['cors']]);
