@@ -10,13 +10,12 @@ use Validator;
 class MemberController extends ApiController
 {
 
-    public function register()
-    {
-    	$data =  Member::get();
+    public function register(JWTAuth $JWTAuth)
+    {    	
     	$rules = [
                 'name' 		=> 'required|min:3',
-                'email' 	=> 'required|email|unique:members,email',
-                'username' 	=> 'required|unique:members,username',
+                'email' 	=> 'required|email',
+                'username' 	=> 'required',
                 'password' 	=> 'required|alpha_num|between:6,12',
                 'address' 	=> '',
                 'phone' 	=> 'required'
@@ -27,6 +26,9 @@ class MemberController extends ApiController
     		$rules
 		);
 		
+        $cekMember = Member::where('email', $this->request->get('email'))->first();
+        if ($cekMember)
+            return $this->response()->error('User already exists', 409);
 
 		if ($validator->fails())
 			return $this->response()->error($validator->errors()->all());
@@ -42,7 +44,8 @@ class MemberController extends ApiController
 		if(! $member->save())
 			return $this->response()->error("failed save data");
     	
-    	return $this->response()->success($member);
+        $token = $JWTAuth->fromUser($member);
+    	return $this->response()->success($member, ['meta.token' => $token]);
     }
 
     public function login(JWTAuth $JWTAuth)
@@ -73,7 +76,7 @@ class MemberController extends ApiController
 
 		} elseif($email == "" ) {
 
-			$Member = Member::Where('username', $username)->first();
+		  $Member = Member::Where('username', $username)->first();
 
 		}
 
@@ -83,6 +86,19 @@ class MemberController extends ApiController
 		$token = $JWTAuth->fromUser($Member);
 
 		return $this->response()->success($Member, ['meta.token' => $token]);
+    }
+
+    public function getUser(JWTAuth $JWTAuth)
+    {        
+        // $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXBpLmtvZGFtaS5jdWsvdXNlci9pbmZvIiwiaWF0IjoxNTE2NzI3MjM1LCJleHAiOjE1MTkzMTkyMzUsIm5iZiI6MTUxNjcyNzIzNSwianRpIjoiRmxIcDdKTDFYUVNZaDdCNCIsInN1YiI6MjIsInBydiI6IjQwM2VjZWY3NDk1N2YzNmZkMmU3OGU4MjliZjRlYTg1NTRkYWIyMDYifQ.0ngk87W-zBrrPXXndjX5HSBqsXrWDinmY6G63NczXYY";
+        // $JWTAuth->setToken($token);
+        // $user = $JWTAuth->user();
+        // return $user;
+
+        $user =  $JWTAuth->parseToken()->authenticate();
+        $token = $JWTAuth->getToken();
+        //$new_token = $JWTAuth->refresh($token);
+        return $this->response()->success($user, ['meta.token' => (string) $token]);
     }
 
 }

@@ -27,7 +27,7 @@ $app = new Laravel\Lumen\Application(
 // Load configuration files
 $app->configure('cors');
 $app->configure('jwt');
-
+$app->configure('auth');
 
 $app->withFacades(true, [
     Tymon\JWTAuth\Facades\JWTAuth::class => 'JWTAuth',
@@ -40,12 +40,14 @@ $app->middleware([
     Barryvdh\Cors\HandleCors::class,
 ]);
 
+
 $app->routeMiddleware([
     'cors'    => \App\Http\Middleware\FormattingRequestMiddleware::class,
+    'jwtauth'    => \App\Http\Middleware\authJWT::class,
 ]);
 
 
-$app->register(Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class);
+$app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(\Barryvdh\Cors\LumenServiceProvider::class);
 $app->register(Kodami\Models\ModelServiceProvider::class);
 

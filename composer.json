@@ -8,7 +8,7 @@
         "php": ">=7.0",
         "laravel/lumen-framework": "5.5.*",
         "vlucas/phpdotenv": "~2.2",
-        "tymon/jwt-auth": "0.5.*",
+        "tymon/jwt-auth": "dev-develop",
         "barryvdh/laravel-cors": "^0.10.0",
         "kodami/models": "dev-master",
         "league/fractal": "^0.17.0",
