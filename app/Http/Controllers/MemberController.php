@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Kodami\Models\Mysql\Member;
+use App\Transformers\MemberTransformer;
 use Illuminate\Support\Facades\Hash;
+use Kodami\Models\Mysql\Member;
 use Tymon\JWTAuth\JWTAuth;
 use Validator;
 
@@ -13,25 +14,25 @@ class MemberController extends ApiController
     public function register(JWTAuth $JWTAuth)
     {    	
     	$rules = [
-                'name' 		=> 'required|min:3',
-                'email' 	=> 'required|email',
-                'username' 	=> 'required',
-                'password' 	=> 'required|alpha_num|between:6,12',
-                'address' 	=> '',
-                'phone' 	=> 'required'
+            'name' 		=> 'required',
+            'email' 	=> 'required|email',
+            'username' 	=> 'required',
+            'password' 	=> 'required|alpha_num|between:6,12',
+            'address' 	=> '',
+            'phone' 	=> 'required'
         ];
 
     	$validator = Validator::make(
     		$this->request->all(),
     		$rules
 		);
+
+        if ($validator->fails())
+            return $this->response()->error($validator->errors()->all());
 		
         $cekMember = Member::where('email', $this->request->get('email'))->first();
         if ($cekMember)
-            return $this->response()->error('User already exists', 409);
-
-		if ($validator->fails())
-			return $this->response()->error($validator->errors()->all());
+            return $this->response()->error('User already exists', 409);		
 
 		$member = new Member;
 		$member->name	= $this->request->get('name');
@@ -45,7 +46,7 @@ class MemberController extends ApiController
 			return $this->response()->error("failed save data");
     	
         $token = $JWTAuth->fromUser($member);
-    	return $this->response()->success($member, ['meta.token' => $token]);
+        return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');
     }
 
     public function login(JWTAuth $JWTAuth)
@@ -69,23 +70,18 @@ class MemberController extends ApiController
 			return $this->response()->error($validator->errors()->all());
 
 		$password = $this->request->get('password');
-		$Member = "";		
-		if($username == "" )
-		{
-			$Member = Member::where('email', $email)->first();
+		$member = "";		
+		
+        if($username == "" )
+			$member = Member::where('email', $email)->first();
+        elseif($email == "" )
+		  $member = Member::Where('username', $username)->first();
 
-		} elseif($email == "" ) {
-
-		  $Member = Member::Where('username', $username)->first();
-
-		}
-
-		if( ! $Member OR ! (Hash::check($password, $Member->password)))
+		if( ! $member OR ! (Hash::check($password, $member->password)))
 			return $this->response()->error("Wrong username or email or password");
 
-		$token = $JWTAuth->fromUser($Member);
-
-		return $this->response()->success($Member, ['meta.token' => $token]);
+		$token = $JWTAuth->fromUser($member);
+        return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');
     }
 
     public function getUser(JWTAuth $JWTAuth)
@@ -97,8 +93,7 @@ class MemberController extends ApiController
 
         $user =  $JWTAuth->parseToken()->authenticate();
         $token = $JWTAuth->getToken();
-        //$new_token = $JWTAuth->refresh($token);
-        return $this->response()->success($user, ['meta.token' => (string) $token]);
+        return $this->response()->success($user, ['meta.token' => (string) $token] , 200, new MemberTransformer(), 'item');
     }
 
 }

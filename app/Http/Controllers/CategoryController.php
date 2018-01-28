@@ -16,7 +16,7 @@ class CategoryController extends ApiController
 	{
 		$Category = Category::where('active', 1)->where('parent_id', 0)->orderBy('order_num', 'ASC')->get();
 		$data = [];
-		return $this->response()->success($Category, [] , 200, new CategoryTransformer(), 'collection');;
+		return $this->response()->success($Category, [] , 200, new CategoryTransformer(), 'collection');
 	}
 
 	public function search()

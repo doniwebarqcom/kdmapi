@@ -22,7 +22,7 @@ class CreateCategoriesTable extends Migration
             $table->tinyInteger('active')->lenght(1)->default(0);
             $table->string('slug');
             $table->string('permalink');
-            $table->text('description');                                
+            $table->text('description');                               
             $table->timestamps();
             $table->softDeletes();
         });
