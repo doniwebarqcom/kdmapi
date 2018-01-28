@@ -15,4 +15,6 @@ $router->get('category-insearch', ['uses' => 'CategoryController@search', 'middl
 
 $router->post('shop/register', ['uses' => 'ShopController@register', 'middleware' => ['cors', 'jwtauth']]);
 
+$router->post('product/input', ['uses' => 'ProductController@input', 'middleware' => ['cors', 'jwtauth']]);
+
 $router->get('user/info', ['uses' => 'MemberController@getUser', 'middleware' => ['cors', 'jwtauth']]);
