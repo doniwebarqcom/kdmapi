@@ -52,7 +52,7 @@ class ShopController extends ApiController
         $koprasi = new Koprasi();
         $koprasi->name = $name;
         $koprasi->url = $url;
-        $koprasi->regency_id = 
+        $koprasi->regency_id = $regency_id;
         $koprasi->slogan = $slogan;
         $koprasi->description = $description;
         $koprasi->image = $image;

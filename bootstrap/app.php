@@ -28,10 +28,12 @@ $app = new Laravel\Lumen\Application(
 $app->configure('cors');
 $app->configure('jwt');
 $app->configure('auth');
+$app->configure('cloudder');
 
 $app->withFacades(true, [
     Tymon\JWTAuth\Facades\JWTAuth::class => 'JWTAuth',
-    Tymon\JWTAuth\Facades\JWTFactory::class => 'JWTFactory'
+    Tymon\JWTAuth\Facades\JWTFactory::class => 'JWTFactory',
+    JD\Cloudder\Facades\Cloudder::class => 'Cloudder'
 ]);
 
 $app->withEloquent();
@@ -50,7 +52,11 @@ $app->routeMiddleware([
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(\Barryvdh\Cors\LumenServiceProvider::class);
 $app->register(Kodami\Models\ModelServiceProvider::class);
+$app->register(JD\Cloudder\CloudderServiceProvider::class);
 
+// 'providers' => array(
+//   'JD\Cloudder\CloudderServiceProvider'
+// );
 
 /*
 |--------------------------------------------------------------------------

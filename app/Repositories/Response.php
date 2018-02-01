@@ -102,11 +102,14 @@ class Response extends ResponseFactory
             'timestamp' => array_key_exists('meta.timestamp', $attribute) ? $attribute['meta.timestamp'] : Carbon::now()->timestamp
         ];
 
+        $paging = array_key_exists('paging', $attribute) ? $attribute['paging'] : [];
         $response = [
-            'status' => $status,
-            'data'   => $data,
-            'meta'   => $meta
+            'status'    => $status,
+            'data'      => $data,
+            'paging'    => $paging,
+            'meta'      => $meta            
         ];
+
 
         return $response;
     }
@@ -145,12 +148,14 @@ class Response extends ResponseFactory
             $result =  $manager->createData($resource)->toArray();
 
         } else 
-            $result = "";
+            $result = [];
 
+        $paging = array_key_exists('paging', $attribute) ? $attribute['paging'] : [];
         $response = [
-            'status' => $status,
-            'data'   => $result,
-            'meta'   => $meta
+            'status'    => $status,
+            'data'      => $result,
+            'paging'    => $paging,
+            'meta'      => $meta            
         ];
 
         return $response;

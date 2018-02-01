@@ -12,7 +12,7 @@ class MemberController extends ApiController
 {
 
     public function register(JWTAuth $JWTAuth)
-    {    	
+    {    
     	$rules = [
             'name' 		=> 'required',
             'email' 	=> 'required|email',
