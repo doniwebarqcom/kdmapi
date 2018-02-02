@@ -18,6 +18,7 @@ class ProductController extends ApiController
 
     	$rules = [
             'category' 		=> 'required',
+            'name' 			=> 'required',
             'description' 	=> 'required',
             'price' 		=> 'required',
             'primary_image'	=> 'required',
@@ -34,7 +35,8 @@ class ProductController extends ApiController
 
 		if ($validator->fails())
 			return $this->response()->error($validator->errors()->all());
-		
+
+		$name = $this->request->get('name');
 		$category_id = (int) $this->request->get('category');
 		$description = $this->request->get('description');
 		$price = $this->request->get('price');
@@ -55,9 +57,11 @@ class ProductController extends ApiController
 		else
 			$avaible = 0;
 		
+
 		$product = new Product();
 		$product->koprasi_id = $user->shop->id;
 		$product->category_id = $category_id;
+		$product->name = $name;
 		$product->description = $description;
 		$product->price = $price;
 		$product->primary_image = $primary_image;
@@ -70,7 +74,7 @@ class ProductController extends ApiController
 		$product->new = $new;
 
 		if (! $product->save())
-            return $this->response()->error('failed save data');
+            return $this->response()->error('failed save data');        
 
         $dataImage = [];
         if(count($images) > 0)

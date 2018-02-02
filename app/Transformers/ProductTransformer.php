@@ -12,6 +12,7 @@ class ProductTransformer extends TransformerAbstract
         $data =  [
             'id'                    => (int) $product->id,
             'category'              => isset($product->category->name) ? $product->category->name : null,
+            'name'                  => $product->name,
             'description'           => $product->description,
             'price'                 => (double) $product->price,
             'primary_image'         => $product->primary_image,
