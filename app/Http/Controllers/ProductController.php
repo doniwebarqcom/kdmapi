@@ -11,7 +11,7 @@ use Validator;
 class ProductController extends ApiController
 {
     public function input(JWTAuth $JWTAuth)
-    {   
+    {       	
     	$user =  $JWTAuth->parseToken()->authenticate();	
     	if(! $user->have_shop OR ! $user->shop)
 			return $this->response()->error('user dont have shop', 409);
@@ -34,8 +34,8 @@ class ProductController extends ApiController
 
 		if ($validator->fails())
 			return $this->response()->error($validator->errors()->all());
-
-		$category_id = $this->request->get('category');
+		
+		$category_id = (int) $this->request->get('category');
 		$description = $this->request->get('description');
 		$price = $this->request->get('price');
 		$primary_image = $this->request->get('primary_image');
@@ -55,7 +55,6 @@ class ProductController extends ApiController
 		else
 			$avaible = 0;
 		
-
 		$product = new Product();
 		$product->koprasi_id = $user->shop->id;
 		$product->category_id = $category_id;
@@ -74,24 +73,27 @@ class ProductController extends ApiController
             return $this->response()->error('failed save data');
 
         $dataImage = [];
-        $a = 0;
-        foreach ($images as $key => $value) {
-        	if(isset($value))
-        	{
-        		$dataImage[$a] = array(
-        			'product_id'	=> $product->id,
-        			'image' 		=> $value,
-				    'created_at'	=> Carbon::now(),
-				    'updated_at'	=> Carbon::now(),
-        		);
+        if(count($images) > 0)
+        {
+        	$a = 0;
+	        foreach ($images as $key => $value) {
+	        	if(isset($value))
+	        	{
+	        		$dataImage[$a] = array(
+	        			'product_id'	=> $product->id,
+	        			'image' 		=> $value,
+					    'created_at'	=> Carbon::now(),
+					    'updated_at'	=> Carbon::now(),
+	        		);
 
-        		$a++;
-        	}
+	        		$a++;
+	        	}
+	        }
+
+	        if(count($dataImage) > 0)
+	        	\DB::table('product_images')->insert($dataImage);	
         }
-
-        if(count($dataImage) > 0)
-        	\DB::table('product_images')->insert($dataImage);
-
+        
         $token = $JWTAuth->fromUser($user);
         return $this->response()->success($product, ['meta.token' => $token] , 200, new ProductTransformer(), 'item');
     }

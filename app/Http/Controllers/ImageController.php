@@ -21,7 +21,7 @@ class ImageController extends ApiController
         if ($validator->fails())
             return $this->response()->error($validator->errors()->all());
 
-		$result_upload = Cloudder::upload($this->request->file('image')->getPathName());		
+		$result_upload = Cloudder::upload($this->request->file('image')->getPathName());
 		return $this->response()->success($result_upload->getResult());
 	}
 }
