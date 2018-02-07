@@ -24,3 +24,5 @@ $router->get('place/postal', ['uses' => 'PlaceController@getPostal', 'middleware
 $router->get('place/regency', ['uses' => 'PlaceController@getRegency', 'middleware' => ['cors']]);
 
 $router->post('image/upload', ['uses' => 'ImageController@upload', 'middleware' => ['cors']]);
+
+$router->get('criteria/category', ['uses' => 'CriteriaController@category', 'middleware' => ['cors']]);

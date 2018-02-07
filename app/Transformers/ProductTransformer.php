@@ -7,6 +7,10 @@ use League\Fractal\TransformerAbstract;
 
 class ProductTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = [
+        'criteria'
+    ];
+
     public function transform(Product $product)
     {    
         $data =  [
@@ -23,10 +27,20 @@ class ProductTransformer extends TransformerAbstract
             'viewer'                => (int) $product->viewer,
             'stock'                 => (int) $product->stock,
             'new'                   => $product->new,
+            'discont'               => $product->discont,
+            'discont_anggota'       => $product->discont_anggota,
             'image'                 => $product->image,
         ];
 
         return $data;
-    }  
+    }
+
+    public function includeCriteria(Product $product)
+    {
+        if(isset($product->criteria))
+            return $this->item($product->criteria, new CriteriaProductCriteriaTransformer);
+        else
+            return [];
+    }
 }
 

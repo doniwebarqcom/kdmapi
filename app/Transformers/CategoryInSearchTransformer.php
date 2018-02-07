@@ -30,7 +30,7 @@ class CategoryInSearchTransformer extends TransformerAbstract
         $children = $children->take(5);
 
         if(isset($children))
-            return $this->collection($children, new CategoryInSearchTransformer);        
+            return $this->collection($children, new CategoryInSearchTransformer);       
     }
 }
 

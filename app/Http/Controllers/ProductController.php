@@ -46,6 +46,12 @@ class ProductController extends ApiController
 		$stock = $this->request->get('stock');
 		$new = $this->request->get('new');
 		$images = $this->request->get('images');
+		$discont_anggota = $this->request->get('discont_anggota');
+		$discont = $this->request->get('discont');
+		$criterias = $this->request->get('criterias') ? $this->request->get('criterias') : [];
+		$grosir_start = $this->request->get('grosir_start') ? $this->request->get('grosir_start') : [];
+		$grosir_until = $this->request->get('grosir_until') ? $this->request->get('grosir_until') : [];
+		$grosir_price = $this->request->get('grosir_price') ? $this->request->get('grosir_price') : [];
 
 		if($new == true)
 			$new = 1;
@@ -55,8 +61,7 @@ class ProductController extends ApiController
 		if($avaible == true)
 			$avaible = 1;
 		else
-			$avaible = 0;
-		
+			$avaible = 0;		
 
 		$product = new Product();
 		$product->koprasi_id = $user->shop->id;
@@ -72,6 +77,8 @@ class ProductController extends ApiController
 		$product->viewer =0;
 		$product->stock = $stock;
 		$product->new = $new;
+		$product->discont = $discont;
+		$product->discont_anggota = $discont_anggota;
 
 		if (! $product->save())
             return $this->response()->error('failed save data');        
@@ -97,8 +104,46 @@ class ProductController extends ApiController
 	        if(count($dataImage) > 0)
 	        	\DB::table('product_images')->insert($dataImage);	
         }
+
+        
+        if(count($grosir_start) > 0)
+        {
+        	$wholesaleprice = [];
+	        foreach ($grosir_start as $key => $value) {
+	        	if(isset($value) AND isset($grosir_until[$key]) AND $grosir_price[$key])
+	        	{
+	        		$wholesaleprice[] = array(
+	        			'product_id'	=> $product->id,
+	        			'from' 			=> (int) $value,
+	        			'to' 			=> (int) $grosir_until[$key],
+	        			'price' 		=> (double) $grosir_price[$key],
+					    'created_at'	=> Carbon::now(),
+					    'updated_at'	=> Carbon::now(),
+	        		);
+	        	}
+	        }
+
+	        if(count($wholesaleprice) > 0)
+	        	\DB::table('wholesale_price')->insert($wholesaleprice);	
+        }
+
+        if(count($criterias) > 0)
+        {
+        	$dataCriteria = [];
+        	foreach ($criterias as $key => $value) {
+        		$dataCriteria[] = array(
+        			'product_id'	=> $product->id,
+        			'value_category_criteria_id' 		=> $value,
+				    'created_at'	=> Carbon::now(),
+				    'updated_at'	=> Carbon::now(),
+        		);
+        	}
+
+        	\DB::table('product_criteria')->insert($dataCriteria);
+        }        
         
         $token = $JWTAuth->fromUser($user);
-        return $this->response()->success($product, ['meta.token' => $token] , 200, new ProductTransformer(), 'item');
+        return $this->response()->success($product, ['meta.token' => $token] , 200, new ProductTransformer(), 'item', null, ['criteria']);
+
     }
 }
