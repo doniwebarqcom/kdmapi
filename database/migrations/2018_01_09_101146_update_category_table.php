@@ -15,7 +15,7 @@ class UpdateCategoryTable extends Migration
     {
         Schema::table('categories', function($table)
         {
-            $table->string('image', 100)->after('description');->nullable();
+            $table->string('image', 100)->after('description')->nullable();
         });
     }
 
