@@ -26,3 +26,5 @@ $router->get('place/regency', ['uses' => 'PlaceController@getRegency', 'middlewa
 $router->post('image/upload', ['uses' => 'ImageController@upload', 'middleware' => ['cors']]);
 
 $router->get('criteria/category', ['uses' => 'CriteriaController@category', 'middleware' => ['cors']]);
+
+$router->get('sms', ['uses' => 'ExampleController@sms', 'middleware' => ['cors']]);

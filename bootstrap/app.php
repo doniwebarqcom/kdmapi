@@ -48,15 +48,11 @@ $app->routeMiddleware([
     'jwtauth'    => \App\Http\Middleware\authJWT::class,
 ]);
 
-
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(\Barryvdh\Cors\LumenServiceProvider::class);
 $app->register(Kodami\Models\ModelServiceProvider::class);
 $app->register(JD\Cloudder\CloudderServiceProvider::class);
-
-// 'providers' => array(
-//   'JD\Cloudder\CloudderServiceProvider'
-// );
+$app->register(Nexmo\Laravel\NexmoServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

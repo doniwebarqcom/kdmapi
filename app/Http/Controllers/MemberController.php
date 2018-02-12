@@ -85,12 +85,7 @@ class MemberController extends ApiController
     }
 
     public function getUser(JWTAuth $JWTAuth)
-    {        
-        // $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXBpLmtvZGFtaS5jdWsvdXNlci9pbmZvIiwiaWF0IjoxNTE2NzI3MjM1LCJleHAiOjE1MTkzMTkyMzUsIm5iZiI6MTUxNjcyNzIzNSwianRpIjoiRmxIcDdKTDFYUVNZaDdCNCIsInN1YiI6MjIsInBydiI6IjQwM2VjZWY3NDk1N2YzNmZkMmU3OGU4MjliZjRlYTg1NTRkYWIyMDYifQ.0ngk87W-zBrrPXXndjX5HSBqsXrWDinmY6G63NczXYY";
-        // $JWTAuth->setToken($token);
-        // $user = $JWTAuth->user();
-        // return $user;
-
+    {   
         $user =  $JWTAuth->parseToken()->authenticate();
         $token = $JWTAuth->getToken();
         return $this->response()->success($user, ['meta.token' => (string) $token] , 200, new MemberTransformer(), 'item');
