@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Transformers\MemberTransformer;
 use Illuminate\Support\Facades\Hash;
 use Kodami\Models\Mysql\Member;
+use Kodami\Models\Mysql\RegistrationMemberByPhone;
 use Tymon\JWTAuth\JWTAuth;
 use Validator;
 
@@ -91,4 +92,33 @@ class MemberController extends ApiController
         return $this->response()->success($user, ['meta.token' => (string) $token] , 200, new MemberTransformer(), 'item');
     }
 
+    public function phone()
+    {
+        $rules = [
+            'phone'      => 'required'
+        ];
+
+        $validator = Validator::make(
+            $this->request->all(),
+            $rules
+        );
+
+        if ($validator->fails())
+            return $this->response()->error($validator->errors()->all());
+
+        $register = RegistrationMemberByPhone::where('phone_number', $this->request->get('phone'))->first();
+        if(! $register)
+            $register = new RegistrationMemberByPhone;
+
+        $newtimestamp = strtotime(date("Y-m-d h:i:s").' + 5 minute');
+        $finalDate =  date('Y-m-d H:i:s', $newtimestamp);
+        $register->phone_number = $this->request->get('phone');
+        $register->unique_code = quickRandom(6);
+        $register->expired_code = $finalDate;
+
+        if(! $register->save())
+            return $this->response()->error("error at saving data");
+
+        return $this->response()->success(['phone_number' => $register->phone_number, 'unique_code' => $register->unique_code]);
+    }    
 }

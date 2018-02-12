@@ -3,3 +3,4 @@ composer.lock
 /packages
 /storage/logs
 /vendor
+.composer.lock

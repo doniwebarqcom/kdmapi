@@ -16,7 +16,7 @@ class CreateRegistrationMemberPhoneTable extends Migration
         Schema::create('registration_member_by_phone', function (Blueprint $table) {
             $table->increments('id');
             $table->string('phone_number')->length(15);
-            $table->string('unique_code')->length(5);
+            $table->string('unique_code')->length(6);
             $table->dateTime('expired_code'); 
             $table->timestamps();
             $table->softDeletes();

@@ -7,6 +7,7 @@ $router->get('/', [
 
 
 $router->post('member/register', ['uses' => 'MemberController@register', 'middleware' => ['cors']]);
+$router->post('member/login/phone', ['uses' => 'MemberController@phone', 'middleware' => ['cors']]);
 $router->post('member/login', ['uses' => 'MemberController@login', 'middleware' => ['cors']]);
 $router->get('user/info', ['uses' => 'MemberController@getUser', 'middleware' => ['cors', 'jwtauth']]);
 
