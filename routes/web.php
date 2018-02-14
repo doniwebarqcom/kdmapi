@@ -32,3 +32,5 @@ $router->post('image/upload', ['uses' => 'ImageController@upload', 'middleware' 
 $router->get('criteria/category', ['uses' => 'CriteriaController@category', 'middleware' => ['cors']]);
 
 $router->get('sms', ['uses' => 'ExampleController@sms', 'middleware' => ['cors']]);
+
+$router->get('ocupation', ['uses' => 'OcupationController@index', 'middleware' => ['cors']]);
