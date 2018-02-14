@@ -18,7 +18,7 @@ class ExampleController extends ApiController
     public function sms()
     {
     	\Nexmo\Laravel\Facade\Nexmo::message()->send([
-		    'to'   => '6282134916615',
+		    'to'   => '6287775365856',
 		    'from' => '6282134916615',
 		    'text' => 'Using the facade to send a message.'
 		]);

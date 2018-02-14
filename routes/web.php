@@ -8,8 +8,11 @@ $router->get('/', [
 
 $router->post('member/register', ['uses' => 'MemberController@register', 'middleware' => ['cors']]);
 $router->post('member/login/phone', ['uses' => 'MemberController@phone', 'middleware' => ['cors']]);
+$router->post('cek/code/register', ['uses' => 'MemberController@cekCode', 'middleware' => ['cors']]);
 $router->post('member/login', ['uses' => 'MemberController@login', 'middleware' => ['cors']]);
+$router->post('register/user/byphone', ['uses' => 'MemberController@registerByPhone', 'middleware' => ['cors']]);
 $router->get('user/info', ['uses' => 'MemberController@getUser', 'middleware' => ['cors', 'jwtauth']]);
+
 
 $router->post('subscribe', ['uses' => 'SubscriberController@index', 'middleware' => ['cors']]);
 $router->post('unsubscribe', ['uses' => 'SubscriberController@delete', 'middleware' => ['cors']]);

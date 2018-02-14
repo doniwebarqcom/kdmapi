@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Kodami\Models\Mysql\Member;
 use Kodami\Models\Mysql\RegistrationMemberByPhone;
 use Tymon\JWTAuth\JWTAuth;
+use Nexmo\Laravel\Facade\Nexmo;
 use Validator;
 
 class MemberController extends ApiController
@@ -110,15 +111,88 @@ class MemberController extends ApiController
         if(! $register)
             $register = new RegistrationMemberByPhone;
 
+        $phone = $this->request->get('phone');
         $newtimestamp = strtotime(date("Y-m-d h:i:s").' + 5 minute');
         $finalDate =  date('Y-m-d H:i:s', $newtimestamp);
-        $register->phone_number = $this->request->get('phone');
+        $register->phone_number = $phone;
         $register->unique_code = quickRandom(6);
         $register->expired_code = $finalDate;
 
         if(! $register->save())
             return $this->response()->error("error at saving data");
 
-        return $this->response()->success(['phone_number' => $register->phone_number, 'unique_code' => $register->unique_code]);
-    }    
+        $send_sms = Nexmo::message()->send([
+            'to'   => $this->request->get('phone'),
+            'from' => '6282134916615',
+            'text' => "This is your code : ".$register->unique_code."   powered by"
+        ]);
+
+        if(! $send_sms)
+            return $this->response()->error("error at sending sms");
+
+        return $this->response()->success('succes');
+    }
+
+    public function cekCode(JWTAuth $JWTAuth)
+    {
+        $rules = [
+            'phone' => 'required',
+            'code'  => 'required',
+        ];
+
+        $validator = Validator::make(
+            $this->request->all(),
+            $rules
+        );
+
+        if ($validator->fails())
+            return $this->response()->error($validator->errors()->all());
+
+        $newtimestamp = strtotime(date("Y-m-d h:i:s").' + 5 minute');
+        $finalDate =  date('Y-m-d H:i:s', $newtimestamp);
+
+        $register = RegistrationMemberByPhone::where('phone_number', $this->request->get('phone'))
+                    ->where('unique_code', $this->request->get('code'))
+                    ->where('expired_code', '<=', $finalDate)
+                    ->first();
+
+        if(! isset($register))
+            return $this->response()->error("data not found");
+
+        $member = Member::where('phone', $this->request->get('phone'))->first();
+        $isMember = 0;
+        $header = [];
+        if(isset($member)){
+            $isMember = 1;
+            $token = $JWTAuth->fromUser($member);
+            $header['meta.token'] = $token;
+        }
+
+        return $this->response()->success(["member" => $isMember], ['meta.token' => $token]);
+    }
+
+    public function registerByPhone(JWTAuth $JWTAuth)
+    {
+        $register = RegistrationMemberByPhone::where('phone_number', $this->request->get('phone'))
+                    ->where('unique_code', $this->request->get('code'))
+                    ->first();
+
+        $member = Member::where('phone', $this->request->get('phone'))->first();
+        if(! isset($member) AND isset($register) )
+        {
+            $member = new Member;
+            $member->name   = "kodami_".$this->request->get('phone');
+            $member->email  = $this->request->get('phone')."@mail.com";
+            $member->username   = "kodami_".$this->request->get('phone');
+            $member->password   = Hash::make($this->request->get('password'));
+            $member->address    = "";
+            $member->phone  = $this->request->get('phone');
+
+            $member->save();            
+        } else if(! isset($member) AND ! isset($register) )
+            return $this->response()->error("data not found");
+        
+        $token = $JWTAuth->fromUser($member);
+        return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');
+    }
 }
