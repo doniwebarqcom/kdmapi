@@ -29,6 +29,10 @@ class CreateModelUsersTable extends Migration
             $table->string('name');
             $table->bigInteger('deposit');
             $table->integer('user_group_id');
+            $table->string('agama', 25);
+            $table->integer('province_id');
+            $table->integer('kabupaten_id');
+
             $table->rememberToken();
             $table->timestamps();
         });
