@@ -31,10 +31,14 @@ class CreateModelUsersTable extends Migration
             $table->integer('user_group_id');
             $table->string('agama', 25);
             $table->integer('province_id');
-            $table->integer('kabupaten_id');
+            $table->integer('district_id');
 
             $table->rememberToken();
             $table->timestamps();
+
+            $table->softDeletes();
+            $table->foregein('province_id')->references('id')->on('provinces');
+            $table->foregein('district_id')->references('id')->on('district');
         });
     }
 
@@ -45,6 +49,10 @@ class CreateModelUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::table('users', function(Blueprint $table){
+            $table->dropIfExists('users');
+            $table->dropForegein('users_province_id_foreign');
+            $table->dropForegein('users_district_id_foreign');
+        });
     }
 }
