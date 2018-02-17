@@ -32,7 +32,8 @@ class CreateModelUsersTable extends Migration
             $table->string('agama', 25);
             $table->integer('province_id');
             $table->integer('district_id');
-
+            $table->dateTime('last_logged_in_at');
+            $table->dateTime('last_logged_out_at');
             $table->rememberToken();
             $table->timestamps();
 
