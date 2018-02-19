@@ -14,3 +14,10 @@ if (!function_exists('quickRandom')) {
         return substr(str_shuffle(str_repeat($pool, $length)), 0, $length);
     }
 }
+
+if (!function_exists('sellingEnv')) {
+	function sellingEnv()
+    {
+        return ['Lingkungan Rumah', 'Kantor'];
+    }
+}

@@ -22,4 +22,9 @@ class OcupationController extends ApiController
 
         return $this->response()->success($result['data'], ['paging' => $result['paging']]);
     }
+
+    public function sellEnv()
+    {
+        return $this->response()->success(sellingEnv());
+    }
 }
