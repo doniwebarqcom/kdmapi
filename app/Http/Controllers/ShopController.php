@@ -15,7 +15,8 @@ class ShopController extends ApiController
             'name' 				=> 'required',
             'url' 				=> 'required',
             'pickup_address' 	=> 'required',
-            'regency' 			=> 'required',
+            'regency'           => 'required',
+            'description' 		=> 'required',
             'postal_code' 		=> 'required|min:5'
         ];
 
@@ -49,7 +50,8 @@ class ShopController extends ApiController
         if ($cek_shop)
             return $this->response()->error('shop already exists', 408);
 
-        $koprasi = new Koprasi();
+        $koprasi = new Koprasi;
+        $koprasi->member_id = $user->id;
         $koprasi->name = $name;
         $koprasi->url = $url;
         $koprasi->regency_id = $regency_id;
