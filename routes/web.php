@@ -24,8 +24,11 @@ $router->post('shop/register', ['uses' => 'ShopController@register', 'middleware
 
 $router->post('product/input', ['uses' => 'ProductController@input', 'middleware' => ['cors', 'jwtauth']]);
 
-$router->get('place/postal', ['uses' => 'PlaceController@getPostal', 'middleware' => ['cors']]);
+$router->get('place/province', ['uses' => 'PlaceController@getProvince', 'middleware' => ['cors']]);
 $router->get('place/regency', ['uses' => 'PlaceController@getRegency', 'middleware' => ['cors']]);
+$router->get('place/district', ['uses' => 'PlaceController@getDistrict', 'middleware' => ['cors']]);
+$router->get('place/village', ['uses' => 'PlaceController@getVillage', 'middleware' => ['cors']]);
+$router->get('place/postal', ['uses' => 'PlaceController@getPostal', 'middleware' => ['cors']]);
 
 $router->post('image/upload', ['uses' => 'ImageController@upload', 'middleware' => ['cors']]);
 
@@ -34,3 +37,6 @@ $router->get('criteria/category', ['uses' => 'CriteriaController@category', 'mid
 $router->get('sms', ['uses' => 'ExampleController@sms', 'middleware' => ['cors']]);
 
 $router->get('ocupation', ['uses' => 'OcupationController@index', 'middleware' => ['cors']]);
+$router->get('selling/enviroment', ['uses' => 'OcupationController@sellEnv', 'middleware' => ['cors']]);
+
+$router->post('register/dropshiper', ['uses' => 'DropshiperController@store', 'middleware' => ['cors', 'jwtauth']]);
