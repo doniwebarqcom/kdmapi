@@ -22,6 +22,7 @@ $router->get('category-insearch', ['uses' => 'CategoryController@search', 'middl
 $router->post('shop/register', ['uses' => 'ShopController@register', 'middleware' => ['cors', 'jwtauth']]);
 
 $router->post('product/input', ['uses' => 'ProductController@input', 'middleware' => ['cors', 'jwtauth']]);
+$router->get('product/list', ['uses' => 'ProductController@list', 'middleware' => ['cors']]);
 
 $router->get('place/province', ['uses' => 'PlaceController@getProvince', 'middleware' => ['cors']]);
 $router->get('place/regency', ['uses' => 'PlaceController@getRegency', 'middleware' => ['cors']]);

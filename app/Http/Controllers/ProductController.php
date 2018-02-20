@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\CostumePagination;
 use App\Transformers\ProductTransformer;
 use Carbon\Carbon;
 use Kodami\Models\Mysql\Product;
@@ -13,7 +14,7 @@ class ProductController extends ApiController
     public function input(JWTAuth $JWTAuth)
     {       	
     	$user =  $JWTAuth->parseToken()->authenticate();	
-    	if(! $user->have_shop OR ! $user->shop)
+    	if($user->shop === null)
 			return $this->response()->error('user dont have shop', 409);
 
     	$rules = [
@@ -145,5 +146,15 @@ class ProductController extends ApiController
         $token = $JWTAuth->fromUser($user);
         return $this->response()->success($product, ['meta.token' => $token] , 200, new ProductTransformer(), 'item', null, ['criteria']);
 
+    }
+
+    public function list()
+    {
+    	$q = $this->request->get('query') ? $this->request->get('query') : null;
+        $limit = $this->request->get('limit') ? $this->request->get('limit') : 20;
+        $post = Product::paginate($limit);
+        $pagination = new CostumePagination($post);     
+        $result = $pagination->render();           
+    	return $this->response()->success($result['data'], ['paging' => $result['paging']] , 200, new ProductTransformer(), 'collection');
     }
 }
