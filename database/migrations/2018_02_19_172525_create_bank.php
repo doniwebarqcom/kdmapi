@@ -15,6 +15,8 @@ class CreateBank extends Migration
     {
         Schema::create('bank', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('nama', 255);
+            $table->text('image');
             $table->timestamps();
         });
     }
