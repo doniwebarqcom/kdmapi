@@ -19,7 +19,6 @@ class CreateRekeningBank extends Migration
             $table->string('no_rekening', 100);
             $table->integer('bank_id');
             $table->text('cabang');
-            $table->text('logo');
             $table->timestamps();
         });
     }
