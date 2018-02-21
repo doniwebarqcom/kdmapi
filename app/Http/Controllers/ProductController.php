@@ -5,12 +5,27 @@ namespace App\Http\Controllers;
 use App\Repositories\CostumePagination;
 use App\Transformers\ProductTransformer;
 use Carbon\Carbon;
+use Kodami\Models\Mysql\Koprasi;
 use Kodami\Models\Mysql\Product;
 use Tymon\JWTAuth\JWTAuth;
 use Validator;
 
 class ProductController extends ApiController
 {
+	public function single($koprasi, $product)
+    {
+    	$k = Koprasi::where('url', strtolower($koprasi))->first();
+    	if($k === null)
+			return $this->response()->error('shop not avaible', 409);
+
+		$p = Product::where('koprasi_id', $k->id)->where('name_alias', strtolower(trim($product)))->first();
+
+		if($p === null)
+			return $this->response()->error('product no found', 409);
+
+		return $this->response()->success($p, [] , 200, new ProductTransformer(), 'item', null, ['criteria']);
+    }
+
     public function input(JWTAuth $JWTAuth)
     {       	
     	$user =  $JWTAuth->parseToken()->authenticate();	
@@ -64,10 +79,13 @@ class ProductController extends ApiController
 		else
 			$avaible = 0;		
 
+		$name_alias = str_replace(" ", "-", $name);
+		$name_alias = str_replace("_", "-", $name_alias);
+
 		$product = new Product();
 		$product->koprasi_id = $user->shop->id;
 		$product->category_id = $category_id;
-		$product->name = $name;
+		$product->name = $name;		
 		$product->description = $description;
 		$product->price = $price;
 		$product->primary_image = $primary_image;
@@ -141,17 +159,18 @@ class ProductController extends ApiController
         	}
 
         	\DB::table('product_criteria')->insert($dataCriteria);
-        }        
-        
+        }
+
+        $product->name_alias = strtolower($name_alias)."-".$product->id;
+        $product->save();
         $token = $JWTAuth->fromUser($user);
         return $this->response()->success($product, ['meta.token' => $token] , 200, new ProductTransformer(), 'item', null, ['criteria']);
-
     }
 
     public function list()
     {
     	$q = $this->request->get('query') ? $this->request->get('query') : null;
-        $limit = $this->request->get('limit') ? $this->request->get('limit') : 20;
+        $limit = $this->request->get('limit') ? $this->request->get('limit') : 10;
         $post = Product::paginate($limit);
         $pagination = new CostumePagination($post);     
         $result = $pagination->render();           

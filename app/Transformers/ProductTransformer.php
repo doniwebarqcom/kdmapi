@@ -17,6 +17,7 @@ class ProductTransformer extends TransformerAbstract
             'id'                    => (int) $product->id,
             'category'              => isset($product->category->name) ? $product->category->name : null,
             'name'                  => $product->name,
+            'alias'                 => $product->name_alias,
             'description'           => $product->description,
             'price'                 => (double) $product->price,
             'primary_image'         => $product->primary_image,
@@ -30,6 +31,7 @@ class ProductTransformer extends TransformerAbstract
             'discont'               => $product->discont,
             'discont_anggota'       => $product->discont_anggota,
             'image'                 => $product->image,
+            'koprasi'               => $product->koprasi,
         ];
 
         return $data;
@@ -38,7 +40,7 @@ class ProductTransformer extends TransformerAbstract
     public function includeCriteria(Product $product)
     {
         if(isset($product->criteria))
-            return $this->item($product->criteria, new CriteriaProductCriteriaTransformer);
+            return $this->collection($product->criteria, new CriteriaProductCriteriaTransformer);
         else
             return [];
     }
