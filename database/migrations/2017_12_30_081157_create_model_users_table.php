@@ -34,6 +34,7 @@ class CreateModelUsersTable extends Migration
             $table->integer('district_id');
             $table->dateTime('last_logged_in_at');
             $table->dateTime('last_logged_out_at');
+            $table->integer('access_id');
             $table->rememberToken();
             $table->timestamps();
 
