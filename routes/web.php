@@ -33,6 +33,7 @@ $router->get('place/postal', ['uses' => 'PlaceController@getPostal', 'middleware
 $router->post('image/upload', ['uses' => 'ImageController@upload', 'middleware' => ['cors']]);
 
 $router->get('criteria/category', ['uses' => 'CriteriaController@category', 'middleware' => ['cors']]);
+$router->get('spesification/category', ['uses' => 'CriteriaController@spesification', 'middleware' => ['cors']]);
 
 $router->get('sms', ['uses' => 'ExampleController@sms', 'middleware' => ['cors']]);
 

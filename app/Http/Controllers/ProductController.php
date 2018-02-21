@@ -55,6 +55,7 @@ class ProductController extends ApiController
 		$name = $this->request->get('name');
 		$category_id = (int) $this->request->get('category');
 		$description = $this->request->get('description');
+		$long_description = $this->request->get('long_description');
 		$price = $this->request->get('price');
 		$primary_image = $this->request->get('primary_image');
 		$avaible = $this->request->get('avaible');
@@ -87,6 +88,7 @@ class ProductController extends ApiController
 		$product->category_id = $category_id;
 		$product->name = $name;		
 		$product->description = $description;
+		$product->long_description = $long_description;
 		$product->price = $price;
 		$product->primary_image = $primary_image;
 		$product->avaible = $avaible;
