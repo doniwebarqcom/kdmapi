@@ -27,7 +27,9 @@ class ProductController extends ApiController
     }
 
     public function input(JWTAuth $JWTAuth)
-    {       	
+    {     
+
+    	return $this->response()->success($_POST);
     	$user =  $JWTAuth->parseToken()->authenticate();	
     	if($user->shop === null)
 			return $this->response()->error('user dont have shop', 409);
