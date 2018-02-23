@@ -7,6 +7,7 @@ use App\Transformers\ProductTransformer;
 use Carbon\Carbon;
 use Kodami\Models\Mysql\Koprasi;
 use Kodami\Models\Mysql\Product;
+use Kodami\Models\Mysql\ProductSpesification;
 use Tymon\JWTAuth\JWTAuth;
 use Validator;
 
@@ -23,13 +24,12 @@ class ProductController extends ApiController
 		if($p === null)
 			return $this->response()->error('product no found', 409);
 
-		return $this->response()->success($p, [] , 200, new ProductTransformer(), 'item', null, ['criteria']);
+		return $this->response()->success($p, [] , 200, new ProductTransformer(), 'item', null, ['criteria', 'spesification']);
     }
 
     public function input(JWTAuth $JWTAuth)
     {     
-
-    	return $this->response()->success($_POST);
+    	
     	$user =  $JWTAuth->parseToken()->authenticate();	
     	if($user->shop === null)
 			return $this->response()->error('user dont have shop', 409);
@@ -68,6 +68,7 @@ class ProductController extends ApiController
 		$discont_anggota = $this->request->get('discont_anggota');
 		$discont = $this->request->get('discont');
 		$criterias = $this->request->get('criterias') ? $this->request->get('criterias') : [];
+		$spesification = $this->request->get('spesification') ? $this->request->get('spesification') : [];
 		$grosir_start = $this->request->get('grosir_start') ? $this->request->get('grosir_start') : [];
 		$grosir_until = $this->request->get('grosir_until') ? $this->request->get('grosir_until') : [];
 		$grosir_price = $this->request->get('grosir_price') ? $this->request->get('grosir_price') : [];
@@ -104,7 +105,7 @@ class ProductController extends ApiController
 		$product->discont_anggota = $discont_anggota;
 
 		if (! $product->save())
-            return $this->response()->error('failed save data');        
+            return $this->response()->error('failed save data');
 
         $dataImage = [];
         if(count($images) > 0)
@@ -119,7 +120,6 @@ class ProductController extends ApiController
 					    'created_at'	=> Carbon::now(),
 					    'updated_at'	=> Carbon::now(),
 	        		);
-
 	        		$a++;
 	        	}
 	        }
@@ -127,8 +127,7 @@ class ProductController extends ApiController
 	        if(count($dataImage) > 0)
 	        	\DB::table('product_images')->insert($dataImage);	
         }
-
-        
+		        
         if(count($grosir_start) > 0)
         {
         	$wholesaleprice = [];
@@ -165,10 +164,26 @@ class ProductController extends ApiController
         	\DB::table('product_criteria')->insert($dataCriteria);
         }
 
+        if(count($spesification) > 0)
+        {
+        	$dataSpesification = [];
+        	foreach ($spesification as $key => $value) {
+        		$dataSpesification[] = array(
+        			'product_id'					=> $product->id,
+        			'category_spesification_id'		=> $key,
+        			'value'							=> $value,
+				    'created_at'					=> Carbon::now(),
+				    'updated_at'					=> Carbon::now(),
+        		);
+        	}
+
+        	\DB::table('product_spesifications')->insert($dataSpesification);
+        }
+
         $product->name_alias = strtolower($name_alias)."-".$product->id;
-        $product->save();
+        $product->save();        
         $token = $JWTAuth->fromUser($user);
-        return $this->response()->success($product, ['meta.token' => $token] , 200, new ProductTransformer(), 'item', null, ['criteria']);
+        return $this->response()->success($product, ['meta.token' => $token] , 200, new ProductTransformer(), 'item');
     }
 
     public function list()
