@@ -18,7 +18,7 @@ class CreateTablePulsa extends Migration
             $table->integer('harga');
             $table->integer('active');
             $table->double('margin', 8, 2);
-            $table->string('operator');
+            $table->string('pulsa_operator_id');
             $table->string('type');
             $table->timestamps();
         });
