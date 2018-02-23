@@ -16,7 +16,8 @@ class MemberTransformer extends TransformerAbstract
             'phone'             => $member->phone,
             'phone'             => $member->phone,
             'address'           => $member->address,
-            'shop'              => $member->shop
+            'shop'              => $member->shop,
+            'dropshiper'        => $member->dropshiper,
         ];
         
         return $data;

@@ -8,7 +8,7 @@ use League\Fractal\TransformerAbstract;
 class ProductTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        'criteria'
+        'criteria', 'spesification'
     ];
 
     public function transform(Product $product)
@@ -19,7 +19,9 @@ class ProductTransformer extends TransformerAbstract
             'name'                  => $product->name,
             'alias'                 => $product->name_alias,
             'description'           => $product->description,
+            'long_description'      => $product->long_description,
             'price'                 => (double) $product->price,
+            'comisi'                => (int) ($product->price * 0.015),
             'primary_image'         => $product->primary_image,
             'avaible'               => $product->is_avaible,
             'success_transaction'   => (int) $product->success_transaction,
@@ -41,6 +43,14 @@ class ProductTransformer extends TransformerAbstract
     {
         if(isset($product->criteria))
             return $this->collection($product->criteria, new CriteriaProductCriteriaTransformer);
+        else
+            return [];
+    }
+
+    public function includeSpesification(Product $product)
+    {
+        if(isset($product->spesification))
+            return $this->collection($product->spesification, new SpesificationProductCriteriaTransformer);
         else
             return [];
     }
