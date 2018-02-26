@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTablePulsaTransaksi extends Migration
+class CreateTablePPulsaOperator extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateTablePulsaTransaksi extends Migration
      */
     public function up()
     {
-        Schema::create('pulsa_transaksi', function (Blueprint $table) {
+        Schema::create('p_pulsa_operator', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
-            $table->integer('pulsa_id');
-            $table->integer('nominal');
-            $table->string('no_telepon');
+            $table->string('nama');
+            $table->string('extention');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateTablePulsaTransaksi extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pulsa_transaksi');
+        Schema::dropIfExists('p_pulsa_operator');
     }
 }
