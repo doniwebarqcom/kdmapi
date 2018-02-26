@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddColumnPVendor extends Migration
+class AddColumnHargaJual extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddColumnPVendor extends Migration
     public function up()
     {
         Schema::table('p_pulsa', function (Blueprint $table) {
-            $table->integer('p_vendor_id');
+            $table->integer('harga_jual');
         });
     }
 
