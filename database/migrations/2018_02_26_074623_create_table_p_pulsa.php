@@ -16,10 +16,8 @@ class CreateTablePPulsa extends Migration
         Schema::create('p_pulsa', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('harga');
-            $table->string('product');
             $table->string('jenis_product');
-            $table->integer('active');
-            $table->double('margin', 8, 2);
+            $table->double('margin', 8, 2)->nullable();
             $table->string('p_pulsa_operator_id');
             $table->string('type');
             $table->string('keterangan');
