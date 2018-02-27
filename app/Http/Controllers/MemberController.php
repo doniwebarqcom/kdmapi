@@ -195,4 +195,28 @@ class MemberController extends ApiController
         $token = $JWTAuth->fromUser($member);
         return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');
     }
+
+    public function upload_image(JWTAuth $JWTAuth)
+    {
+        $rules = [
+            'photo' => 'required',
+        ];
+
+        $validator = Validator::make(
+            $this->request->all(),
+            $rules
+        );
+
+        if ($validator->fails())
+            return $this->response()->error($validator->errors()->all());
+
+        $member =  $JWTAuth->parseToken()->authenticate();
+        $member->image  = $this->request->get('photo');
+
+        if(! $member->save())
+            return $this->response()->error("failed save data");
+        
+        $token = $JWTAuth->fromUser($member);
+        return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');       
+    }
 }

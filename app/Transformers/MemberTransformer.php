@@ -12,10 +12,12 @@ class MemberTransformer extends TransformerAbstract
         $data =  [
             'id'                => (int) $member->id,
             'email'             => $member->email,
+            'name'              => $member->name,
             'username'          => $member->username,
-            'phone'             => $member->phone,
-            'phone'             => $member->phone,
+            'phone'             => $member->phone,            
             'address'           => $member->address,
+            'image'             => $member->image,
+            'birth'             => $member->birth,
             'shop'              => $member->shop,
             'dropshiper'        => $member->dropshiper,
         ];

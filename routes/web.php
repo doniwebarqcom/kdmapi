@@ -12,6 +12,7 @@ $router->post('cek/code/register', ['uses' => 'MemberController@cekCode', 'middl
 $router->post('member/login', ['uses' => 'MemberController@login', 'middleware' => ['cors']]);
 $router->post('register/user/byphone', ['uses' => 'MemberController@registerByPhone', 'middleware' => ['cors']]);
 $router->get('user/info', ['uses' => 'MemberController@getUser', 'middleware' => ['cors', 'jwtauth']]);
+$router->post('member/edit/image', ['uses' => 'MemberController@upload_image' , 'middleware' => ['cors', 'jwtauth']]);
 
 $router->post('subscribe', ['uses' => 'SubscriberController@index', 'middleware' => ['cors']]);
 $router->post('unsubscribe', ['uses' => 'SubscriberController@delete', 'middleware' => ['cors']]);
