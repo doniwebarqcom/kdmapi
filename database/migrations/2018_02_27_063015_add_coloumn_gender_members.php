@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddColoumnLongDescription extends Migration
+class AddColoumnGenderMembers extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddColoumnLongDescription extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->text('long_description')->after('description');
+        Schema::table('members', function (Blueprint $table) {
+            $table->boolean('gender')->default(1)->after('name');
         });
     }
 
@@ -25,8 +25,8 @@ class AddColoumnLongDescription extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('long_description');
+        Schema::table('members', function (Blueprint $table) {
+            $table->dropColumn('gender');
         });
     }
 }
