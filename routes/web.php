@@ -6,13 +6,19 @@ $router->get('/', [
 ]);
 
 
+$router->get('user/info', ['uses' => 'MemberController@getUser', 'middleware' => ['cors', 'jwtauth']]);
+$router->get('member/place/list', ['uses' => 'MemberController@place_list' , 'middleware' => ['cors', 'jwtauth']]);
+$router->post('member/place/get', ['uses' => 'Member\PlaceController@getPlace' , 'middleware' => ['cors', 'jwtauth']]);
 $router->post('member/register', ['uses' => 'MemberController@register', 'middleware' => ['cors']]);
 $router->post('member/login/phone', ['uses' => 'MemberController@phone', 'middleware' => ['cors']]);
 $router->post('cek/code/register', ['uses' => 'MemberController@cekCode', 'middleware' => ['cors']]);
 $router->post('member/login', ['uses' => 'MemberController@login', 'middleware' => ['cors']]);
 $router->post('register/user/byphone', ['uses' => 'MemberController@registerByPhone', 'middleware' => ['cors']]);
-$router->get('user/info', ['uses' => 'MemberController@getUser', 'middleware' => ['cors', 'jwtauth']]);
 $router->post('member/edit/image', ['uses' => 'MemberController@upload_image' , 'middleware' => ['cors', 'jwtauth']]);
+$router->post('member/edit/profile', ['uses' => 'MemberController@profile_store' , 'middleware' => ['cors', 'jwtauth']]);
+$router->post('member/place', ['uses' => 'Member\PlaceController@store' , 'middleware' => ['cors', 'jwtauth']]);
+$router->put('member/place', ['uses' => 'Member\PlaceController@put' , 'middleware' => ['cors', 'jwtauth']]);
+$router->delete('member/place', ['uses' => 'Member\PlaceController@destroy' , 'middleware' => ['cors', 'jwtauth']]);
 
 $router->post('subscribe', ['uses' => 'SubscriberController@index', 'middleware' => ['cors']]);
 $router->post('unsubscribe', ['uses' => 'SubscriberController@delete', 'middleware' => ['cors']]);
@@ -30,6 +36,7 @@ $router->get('place/regency', ['uses' => 'PlaceController@getRegency', 'middlewa
 $router->get('place/district', ['uses' => 'PlaceController@getDistrict', 'middleware' => ['cors']]);
 $router->get('place/village', ['uses' => 'PlaceController@getVillage', 'middleware' => ['cors']]);
 $router->get('place/postal', ['uses' => 'PlaceController@getPostal', 'middleware' => ['cors']]);
+$router->get('place/postal-code/district', ['uses' => 'PlaceController@postalcodeByDistrict', 'middleware' => ['cors']]);
 
 $router->post('image/upload', ['uses' => 'ImageController@upload', 'middleware' => ['cors']]);
 
