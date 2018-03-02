@@ -17,8 +17,8 @@ class CreateTablePPulsaTransaksi extends Migration
             $table->increments('id');
             $table->string('no_invoice');
             $table->integer('user_id');
-            $table->integer('pulsa_id');
-            $table->integer('nominal');
+            $table->integer('p_pulsa_id');
+            $table->integer('status');
             $table->string('no_telepon');
             $table->timestamps();
         });

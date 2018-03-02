@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddFieldOperatorPPulsaOperator extends Migration
+class AddColumnNominalPulsa extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddFieldOperatorPPulsaOperator extends Migration
      */
     public function up()
     {
-        Schema::table('p_pulsa_operator', function (Blueprint $table) {
-            $table->string('operator');
+        Schema::table('p_pulsa', function (Blueprint $table) {
+            $table->integer('nominal_pulsa');
         });
     }
 
@@ -25,7 +25,7 @@ class AddFieldOperatorPPulsaOperator extends Migration
      */
     public function down()
     {
-        Schema::table('p_pulsa_operator', function (Blueprint $table) {
+        Schema::table('p_pulsa', function (Blueprint $table) {
             //
         });
     }
