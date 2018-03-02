@@ -13,6 +13,7 @@ class MemberTransformer extends TransformerAbstract
             'id'                => (int) $member->id,
             'email'             => $member->email,
             'name'              => $member->name,
+            'gender'            => (int) $member->gender,
             'username'          => $member->username,
             'phone'             => $member->phone,            
             'address'           => $member->address,

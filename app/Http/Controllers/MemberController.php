@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Transformers\MemberTransformer;
+use App\Transformers\MemberPlacePickupTransformer;
 use Illuminate\Support\Facades\Hash;
 use Kodami\Models\Mysql\Member;
+use Kodami\Models\Mysql\MemberPlacePickup;
 use Kodami\Models\Mysql\RegistrationMemberByPhone;
 use Tymon\JWTAuth\JWTAuth;
 use Nexmo\Laravel\Facade\Nexmo;
@@ -217,6 +219,42 @@ class MemberController extends ApiController
             return $this->response()->error("failed save data");
         
         $token = $JWTAuth->fromUser($member);
-        return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');       
+        return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');
+    }
+
+    public function profile_store(JWTAuth $JWTAuth)
+    {
+        $rules = [
+            'name' => 'required',
+            'birth' => 'required',
+            'gender' => 'required',
+        ];
+
+        $validator = Validator::make(
+            $this->request->all(),
+            $rules
+        );
+
+        if ($validator->fails())
+            return $this->response()->error($validator->errors()->all());
+
+        $member =  $JWTAuth->parseToken()->authenticate();
+        $member->name  = $this->request->get('name');
+        $member->gender  = $this->request->get('gender');
+        $member->birth  = date("Y-m-d" , $this->request->get('birth'));
+
+        if(! $member->save())
+            return $this->response()->error("failed save data");
+        
+        $token = $JWTAuth->fromUser($member);
+        return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');
+    }
+
+    public function place_list(JWTAuth $JWTAuth)
+    {
+        $member =  $JWTAuth->parseToken()->authenticate();
+        $pickup = MemberPlacePickup::where('member_id', $member->id)->get();
+        $token = $JWTAuth->fromUser($member);
+        return $this->response()->success($pickup, ['meta.token' => $token] , 200, new MemberPlacePickupTransformer(), 'collection');
     }
 }
