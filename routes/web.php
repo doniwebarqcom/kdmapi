@@ -50,4 +50,5 @@ $router->get('selling/enviroment', ['uses' => 'OcupationController@sellEnv', 'mi
 
 $router->post('register/dropshiper', ['uses' => 'DropshiperController@store', 'middleware' => ['cors', 'jwtauth']]);
 
+$router->get('product/{alias}', 'ProductController@getData');
 $router->get('{koprasi}/{product}', 'ProductController@single');

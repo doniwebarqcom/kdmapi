@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Repositories\CostumePagination;
 use App\Transformers\ProductTransformer;
+use App\Transformers\KodamiProductTransformer;
 use Carbon\Carbon;
 use Kodami\Models\Mysql\Koprasi;
 use Kodami\Models\Mysql\Product;
+use Kodami\Models\Mysql\KodamiProduct;
 use Kodami\Models\Mysql\ProductSpesification;
 use Tymon\JWTAuth\JWTAuth;
 use Validator;
@@ -25,6 +27,13 @@ class ProductController extends ApiController
 			return $this->response()->error('product no found', 409);
 
 		return $this->response()->success($p, [] , 200, new ProductTransformer(), 'item', null, ['criteria', 'spesification']);
+    }
+
+    public function getData($alias)
+    {
+    	$product = KodamiProduct::where('name_alias', strtolower(trim($alias)))->first();
+		return $this->response()->success($product, [] , 200, new KodamiProductTransformer(), 'item');
+
     }
 
     public function input(JWTAuth $JWTAuth)
