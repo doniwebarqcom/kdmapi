@@ -34,7 +34,7 @@ class CreateKodamiProductSpesificationsTable extends Migration
      */
     public function down()
     {
-         Schema::table('kodami_product_spesifications', function (Blueprint $table) {
+        Schema::table('kodami_product_spesifications', function (Blueprint $table) {
             $table->dropIfExists('kodami_product_spesifications');
             $table->dropForeign('kodami_product_spesifications_kodami_kodami_product_id_foreign');
             $table->dropForeign('kodami_product_spesifications_kodami_category_spesification_id_foreign');

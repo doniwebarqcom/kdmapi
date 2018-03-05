@@ -8,7 +8,7 @@ use League\Fractal\TransformerAbstract;
 class KodamiProductTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        'criteria', 'spesification'
+        'spesification'
     ];
 
     public function transform(KodamiProduct $product)
@@ -38,20 +38,10 @@ class KodamiProductTransformer extends TransformerAbstract
         return $data;
     }
 
-    public function includeCriteria(Product $product)
-    {
-        if(isset($product->criteria))
-            return $this->collection($product->criteria, new CriteriaProductCriteriaTransformer);
-        else
-            return [];
-    }
-
-    public function includeSpesification(Product $product)
+    public function includeSpesification(KodamiProduct $product)
     {
         if(isset($product->spesification))
-            return $this->collection($product->spesification, new SpesificationProductCriteriaTransformer);
-        else
-            return [];
+            return $this->collection($product->spesification, new KodamiProductSpecificationTransformer);
     }
 }
 

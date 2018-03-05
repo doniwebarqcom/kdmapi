@@ -32,7 +32,7 @@ class ProductController extends ApiController
     public function getData($alias)
     {
     	$product = KodamiProduct::where('name_alias', strtolower(trim($alias)))->first();
-		return $this->response()->success($product, [] , 200, new KodamiProductTransformer(), 'item');
+		return $this->response()->success($product, [] , 200, new KodamiProductTransformer(), 'item', null, ['spesification']);
 
     }
 
