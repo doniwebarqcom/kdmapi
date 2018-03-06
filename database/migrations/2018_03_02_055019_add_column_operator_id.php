@@ -14,7 +14,7 @@ class AddColumnOperatorId extends Migration
     public function up()
     {
         Schema::table('p_pulsa_transaksi', function (Blueprint $table) {
-            $table->integer('operator_id');
+            $table->integer('operator_id')->nullable();
         });
     }
 
