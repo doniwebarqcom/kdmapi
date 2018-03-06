@@ -50,4 +50,10 @@ $router->get('selling/enviroment', ['uses' => 'OcupationController@sellEnv', 'mi
 
 $router->post('register/dropshiper', ['uses' => 'DropshiperController@store', 'middleware' => ['cors', 'jwtauth']]);
 
+$router->get('product/{alias}', 'ProductController@getData');
+
+$router->get('cart', ['uses' => 'ProductController@cart' , 'middleware' => ['cors', 'jwtauth']]);
+$router->delete('cart/{id}', ['uses' => 'ProductController@destroy_cart' , 'middleware' => ['cors', 'jwtauth']]);
+$router->post('{product}/add-cart', ['uses' => 'ProductController@addCart' , 'middleware' => ['cors', 'jwtauth']]);
+
 $router->get('{koprasi}/{product}', 'ProductController@single');
