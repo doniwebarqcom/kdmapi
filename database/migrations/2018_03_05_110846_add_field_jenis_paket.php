@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddColumnOperatorId extends Migration
+class AddFieldJenisPaket extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddColumnOperatorId extends Migration
      */
     public function up()
     {
-        Schema::table('p_pulsa_transaksi', function (Blueprint $table) {
-            $table->integer('operator_id')->nullable();
+        Schema::table('p_pulsa', function (Blueprint $table) {
+            $table->string('jenis_paket');
         });
     }
 
@@ -25,7 +25,7 @@ class AddColumnOperatorId extends Migration
      */
     public function down()
     {
-        Schema::table('p_pulsa_transaksi', function (Blueprint $table) {
+        Schema::table('pulsa', function (Blueprint $table) {
             //
         });
     }
