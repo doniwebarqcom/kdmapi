@@ -6,6 +6,10 @@ $router->get('/', [
 ]);
 
 
+$router->get('rajaongkir', 'ExampleController@rajaongkir');
+
+$router->post('shipping', 'ShippingController@getData');
+
 $router->get('user/info', ['uses' => 'MemberController@getUser', 'middleware' => ['cors', 'jwtauth']]);
 $router->get('member/place/list', ['uses' => 'MemberController@place_list' , 'middleware' => ['cors', 'jwtauth']]);
 $router->post('member/place/get', ['uses' => 'Member\PlaceController@getPlace' , 'middleware' => ['cors', 'jwtauth']]);
@@ -50,10 +54,10 @@ $router->get('selling/enviroment', ['uses' => 'OcupationController@sellEnv', 'mi
 
 $router->post('register/dropshiper', ['uses' => 'DropshiperController@store', 'middleware' => ['cors', 'jwtauth']]);
 
+$router->get('cart', ['uses' => 'CartController@list' , 'middleware' => ['cors', 'jwtauth']]);
+$router->post('cart/store', ['uses' => 'CartController@store' , 'middleware' => ['cors', 'jwtauth']]);
+$router->delete('cart/{id}', ['uses' => 'CartController@destroy_cart' , 'middleware' => ['cors', 'jwtauth']]);
+$router->post('{product}/add-cart', ['uses' => 'CartController@addCart' , 'middleware' => ['cors', 'jwtauth']]);
+
 $router->get('product/{alias}', 'ProductController@getData');
-
-$router->get('cart', ['uses' => 'ProductController@cart' , 'middleware' => ['cors', 'jwtauth']]);
-$router->delete('cart/{id}', ['uses' => 'ProductController@destroy_cart' , 'middleware' => ['cors', 'jwtauth']]);
-$router->post('{product}/add-cart', ['uses' => 'ProductController@addCart' , 'middleware' => ['cors', 'jwtauth']]);
-
 $router->get('{koprasi}/{product}', 'ProductController@single');

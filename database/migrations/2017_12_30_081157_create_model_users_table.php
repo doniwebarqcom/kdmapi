@@ -39,8 +39,8 @@ class CreateModelUsersTable extends Migration
             $table->timestamps();
 
             $table->softDeletes();
-            $table->foregein('province_id')->references('id')->on('provinces');
-            $table->foregein('district_id')->references('id')->on('district');
+            $table->foreign('province_id')->references('id')->on('provinces');
+            $table->foreign('district_id')->references('id')->on('district');
         });
     }
 

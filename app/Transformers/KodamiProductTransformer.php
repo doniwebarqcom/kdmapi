@@ -26,7 +26,7 @@ class KodamiProductTransformer extends TransformerAbstract
             'avaible'               => $product->is_avaible,
             'success_transaction'   => (int) $product->success_transaction,
             'total_comment'         => (int) $product->total_comment,
-            'weight'                => (int) $product->weight,
+            'weight'                => (int) $product->weight + 1,
             'viewer'                => (int) $product->viewer,
             'stock'                 => (int) $product->stock(),
             'new'                   => $product->new,

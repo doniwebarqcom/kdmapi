@@ -23,7 +23,11 @@ class MemberPlacePickupTransformer extends TransformerAbstract
             'recipient_name'			=> $pickup->recipient_name,
             'phone_number_recipient'	=> $pickup->phone_number_recipient,
             'postal_code'				=> $pickup->postal_code,
-            'addres' 					=> $pickup->addres,
+            'addres'                    => $pickup->addres,
+            'province'                  => $province,
+            'regency'                   => $regency,
+            'regency_id'               => $pickup->district->id,
+            'district' 					=> $district,
         ];    
 
         return $data;
