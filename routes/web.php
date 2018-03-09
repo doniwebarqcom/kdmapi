@@ -55,7 +55,10 @@ $router->get('selling/enviroment', ['uses' => 'OcupationController@sellEnv', 'mi
 $router->post('register/dropshiper', ['uses' => 'DropshiperController@store', 'middleware' => ['cors', 'jwtauth']]);
 
 $router->get('cart', ['uses' => 'CartController@list' , 'middleware' => ['cors', 'jwtauth']]);
+$router->post('cart/update', ['uses' => 'CartController@update' , 'middleware' => ['cors', 'jwtauth']]);
 $router->post('cart/store', ['uses' => 'CartController@store' , 'middleware' => ['cors', 'jwtauth']]);
+$router->post('cart/store/withNewPlace', ['uses' => 'CartController@withNewPlace' , 'middleware' => ['cors', 'jwtauth']]);
+
 $router->delete('cart/{id}', ['uses' => 'CartController@destroy_cart' , 'middleware' => ['cors', 'jwtauth']]);
 $router->post('{product}/add-cart', ['uses' => 'CartController@addCart' , 'middleware' => ['cors', 'jwtauth']]);
 
