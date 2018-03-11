@@ -22,6 +22,20 @@ if (!function_exists('sellingEnv')) {
     }
 }
 
+if (!function_exists('random_trasaction_code')) {
+    function random_trasaction_code($total_data = 0)
+    {
+        $charackter = strlen($total_data);
+        for ($i=$charackter; $i < 6; $i++) { 
+            $total_data="0".$total_data;
+        }
+
+        $result = "Kodami".quickRandom(5).$total_data;
+
+        return $result;
+    }
+}
+
 
 if (!function_exists('rajaOngkirApi')) {
     function rajaOngkirApi($url = "", $type = 'GET', $params = null)

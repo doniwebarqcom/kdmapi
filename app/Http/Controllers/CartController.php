@@ -24,7 +24,7 @@ class CartController extends ApiController
 
 		$member =  $JWTAuth->parseToken()->authenticate();	
 		$cart = CartItem::where('member_id', $member->id)->where('product_id', $this->request->product)->where('addres', $MemberPlacePickup->addres)->where('postal_code', $MemberPlacePickup->postal_code)->first();
-		$quantity = isset($_POST['quantity']) ? $_POST['quantity'] : false;
+		$quantity = isset($_POST['quantity']) ? $_POST['quantity'] : false;		
 		
 		if(! $cart){
 			$cart = new CartItem;			
@@ -32,15 +32,20 @@ class CartController extends ApiController
 				$cart->quantity = $quantity;
 			else
 				$cart->quantity = 1;
-
-			$cart->shipping_cost = $_POST['shipping'];
-		}else{
+		}else
 			$cart->quantity += $quantity;
-			$cart->shipping_cost += $_POST['shipping'];
-		}
+
+
+		$weight = ceil($cart->quantity * $product->weight);
+    	$shipping = rajaOngkirApi('cost', 'POST', 'origin=501&destination=114&weight='.$weight.'&courier=jne');
+    	$result_shipping = isset($shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value']) ? $shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value'] : 0;
 
 		$cart->member_id = $member->id;
+		$cart->shipping_cost = $result_shipping;
 		$cart->product_id = $product->id;
+		$cart->product_price = $product->price;
+		$cart->product_name = $product->name;
+		$cart->product_weight = $product->weight;
 		$cart->recipient_name = $MemberPlacePickup->recipient_name;
 		$cart->phone_number_recipient = $MemberPlacePickup->phone_number_recipient;
 		$cart->postal_code = $MemberPlacePickup->postal_code;
@@ -64,7 +69,20 @@ class CartController extends ApiController
     	if(! $product)
     		return $this->response()->error('product not found');
 
-		return $this->response()->success($cart->product_id);
+    	$weight = ceil($this->request->quantity * $product->weight);
+    	$shipping = rajaOngkirApi('cost', 'POST', 'origin=501&destination=114&weight='.$weight.'&courier=jne');
+    	$result_shipping = isset($shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value']) ? $shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value'] : 0;
+		
+		$cart->quantity = $this->request->quantity;
+		$cart->product_price = $product->price;
+		$cart->product_name = $product->name;
+		$cart->product_weight = $product->weight;
+		$cart->shipping_cost = $result_shipping;
+
+		if(! $cart->save())
+			return $this->response()->error('failed save cart');
+	
+		return $this->response()->success($cart);
 	}
 
 	public function withNewPlace(JWTAuth $JWTAuth)
@@ -113,9 +131,16 @@ class CartController extends ApiController
 		else
 			$cart->quantity = 1;
 
-		$cart->shipping_cost = $_POST['shipping'];
+		$weight = ceil($cart->quantity * $product->weight);
+    	$shipping = rajaOngkirApi('cost', 'POST', 'origin=501&destination=114&weight='.$weight.'&courier=jne');
+    	$result_shipping = isset($shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value']) ? $shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value'] : 0;
+
+		$cart->shipping_cost = $result_shipping;
 		$cart->member_id = $member->id;
 		$cart->product_id = $product->id;
+		$cart->product_price = $product->price;
+		$cart->product_name = $product->name;
+		$cart->product_weight = $product->weight;
 		$cart->recipient_name = $MemberPlacePickup->recipient_name;
 		$cart->phone_number_recipient = $MemberPlacePickup->phone_number_recipient;
 		$cart->postal_code = $MemberPlacePickup->postal_code;
@@ -131,9 +156,9 @@ class CartController extends ApiController
 
 	public function list(JWTAuth $JWTAuth)
     {
-		$member =  $JWTAuth->parseToken()->authenticate();				
+		$member =  $JWTAuth->parseToken()->authenticate();
 		$cart = CartItem::where('member_id', $member->id)->get();
-		return $this->response()->success($cart, [] , 200, new CartItemTransformer(), 'collection', null, ['product']);    	
+		return $this->response()->success($cart, [] , 200, new CartItemTransformer(), 'collection', null, ['product']);
     }
 
 	public function destroy_cart($id)

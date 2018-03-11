@@ -16,7 +16,7 @@ class UpdateCartItems extends Migration
         Schema::table('cart_items', function (Blueprint $table) {
             $table->dropForeign(['member_place_pickup_id']);
             $table->dropColumn('member_place_pickup_id');
-            $table->integer('district_id')->length(5)->unsigned()->after('member_id');                             
+            $table->integer('district_id')->length(5)->unsigned()->after('member_id');
             $table->text('addres')->nullable()->after('quantity');
             $table->string('postal_code')->length(100)->nullable()->after('quantity');
             $table->string('phone_number_recipient')->length(100)->nullable()->after('quantity');
@@ -35,7 +35,6 @@ class UpdateCartItems extends Migration
     public function down()
     {
         Schema::table('cart_items', function (Blueprint $table) {
-            $table->dropColumn('addres');
             $table->dropColumn('postal_code');
             $table->dropColumn('phone_number_recipient');
             $table->dropColumn('district_id');
