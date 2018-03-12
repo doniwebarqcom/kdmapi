@@ -35,51 +35,9 @@ class ProductController extends ApiController
     {
     	$product = KodamiProduct::where('name_alias', strtolower(trim($alias)))->first();
 		return $this->response()->success($product, [] , 200, new KodamiProductTransformer(), 'item', null, ['spesification']);
-    }
+    }    
 
-    public function destroy_cart($id)
-    {
-    	$cart = CartItem::find($id);
-    	$cart->delete();
-    	return $this->response()->success('succes');	
-    }
-
-    public function addCart($product, JWTAuth $JWTAuth)
-    {
-    	$product = KodamiProduct::where('name_alias', strtolower(trim($product)))->first();
-    	$quantity = isset($_POST['quantity']) ? $_POST['quantity'] : false;
-
-    	if(! $product)
-    		return $this->response()->success();
-		
-		$member =  $JWTAuth->parseToken()->authenticate();
-		$cart = CartItem::where('member_id', $member->id)->where('product_id', $product->id)->first();
-
-		if(! $cart){
-			$cart = new CartItem;
-			$cart->member_id = $member->id;
-			$cart->product_id = $product->id;
-			
-			if($quantity)
-				$cart->quantity = $quantity;
-			else
-				$cart->quantity = 1;
-
-		}else {
-
-			if($quantity)
-				$cart->quantity = $quantity;
-			else
-				$cart->quantity = 1;
-
-		}
-
-		if(! $cart->save())
-			return $this->response()->error('failed save cart');
-	
-		return $this->response()->success('succes');
-    }
-
+    
     public function input(JWTAuth $JWTAuth)
     {     
     	
@@ -247,12 +205,5 @@ class ProductController extends ApiController
         $pagination = new CostumePagination($post);     
         $result = $pagination->render();           
     	return $this->response()->success($result['data'], ['paging' => $result['paging']] , 200, new ProductTransformer(), 'collection');
-    }
-
-    public function cart(JWTAuth $JWTAuth)
-    {
-		$member =  $JWTAuth->parseToken()->authenticate();				
-		$cart = CartItem::where('member_id', $member->id)->get();
-		return $this->response()->success($cart, [] , 200, new CartItemTransformer(), 'collection', null, ['product']);    	
-    }
+    }    
 }

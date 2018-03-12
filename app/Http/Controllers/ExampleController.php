@@ -95,6 +95,38 @@ class ExampleController extends ApiController
         return 1;
     }
 
+    public function rajaongkir()
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => env('RAJAONGKIR_ENDPOINT')."/cost",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTFIELDS => 'origin=501&destination=114&weight=1&courier=jne',
+          CURLOPT_HTTPHEADER => array(
+            "key:".env('RAJAONGKIR_KEY')
+          ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+           "cURL Error #:" . $err;
+        } else {
+            $data = json_decode($response, true);
+        }
+
+        return $data['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value'];
+    }
+
     public function sms()
     {
     	\Nexmo\Laravel\Facade\Nexmo::message()->send([

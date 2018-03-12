@@ -32,8 +32,7 @@ class CreateCartItemsTable extends Migration
      * @return void
      */
     public function down()
-    {
-        Schema::dropIfExists('cart_items');
+    {        
         Schema::table('cart_items', function (Blueprint $table) {
             $table->dropIfExists('cart_items');
             $table->dropForeign('cart_items_member_id_foreign');
