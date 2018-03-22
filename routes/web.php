@@ -63,5 +63,8 @@ $router->post('cart/store/withNewPlace', ['uses' => 'CartController@withNewPlace
 $router->delete('cart/{id}', ['uses' => 'CartController@destroy_cart' , 'middleware' => ['cors', 'jwtauth']]);
 $router->post('{product}/add-cart', ['uses' => 'CartController@addCart' , 'middleware' => ['cors', 'jwtauth']]);
 
+$router->post('payment/choose', ['uses' => 'PaymentController@choose' , 'middleware' => ['cors', 'jwtauth']]);
+$router->get('payment/bill', ['uses' => 'PaymentController@bill' , 'middleware' => ['cors', 'jwtauth']]);
+
 $router->get('product/{alias}', 'ProductController@getData');
 $router->get('{koprasi}/{product}', 'ProductController@single');

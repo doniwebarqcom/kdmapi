@@ -22,7 +22,7 @@ class CartController extends ApiController
 		if(! $MemberPlacePickup)
 			return $this->response()->success('succes');
 
-		$member =  $JWTAuth->parseToken()->authenticate();	
+		$member =  $JWTAuth->parseToken()->authenticate();
 		$cart = CartItem::where('member_id', $member->id)->where('product_id', $this->request->product)->where('addres', $MemberPlacePickup->addres)->where('postal_code', $MemberPlacePickup->postal_code)->first();
 		$quantity = isset($_POST['quantity']) ? $_POST['quantity'] : false;		
 		

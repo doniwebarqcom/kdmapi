@@ -15,6 +15,15 @@ if (!function_exists('quickRandom')) {
     }
 }
 
+if (!function_exists('quickRandomNumber')) {
+    function quickRandomNumber($length = 3)
+    {
+        $pool = '0123456789';
+
+        return substr(str_shuffle(str_repeat($pool, $length)), 0, $length);
+    }
+}
+
 if (!function_exists('sellingEnv')) {
 	function sellingEnv()
     {
