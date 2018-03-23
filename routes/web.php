@@ -12,6 +12,8 @@ $router->post('shipping', 'ShippingController@getData');
 
 $router->get('checkout', ['uses' => 'CheckoutController@store', 'middleware' => ['cors', 'jwtauth']]);
 
+$router->get('banner_slideshow', ['uses' => 'BannerController@slideshow', 'middleware' => ['cors']]);
+
 $router->get('user/info', ['uses' => 'MemberController@getUser', 'middleware' => ['cors', 'jwtauth']]);
 $router->get('member/place/list', ['uses' => 'MemberController@place_list' , 'middleware' => ['cors', 'jwtauth']]);
 $router->post('member/place/get', ['uses' => 'Member\PlaceController@getPlace' , 'middleware' => ['cors', 'jwtauth']]);

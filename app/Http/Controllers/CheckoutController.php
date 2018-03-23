@@ -31,7 +31,7 @@ class CheckoutController extends ApiController
     		$transaction->transaction_code = $transaction_code;
 
     		if(! $trans->save())
-    			return $this->response()->error('not found cart');    		
+    			return $this->response()->error('not found cart');
     	}
 
     	if(count($transaction) > 0 AND count($cart) > 0){
