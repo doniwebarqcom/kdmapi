@@ -8,11 +8,25 @@ $router->get('/', [
 
 $router->get('rajaongkir', 'ExampleController@rajaongkir');
 
+$router->get('special-offer', 'BannerController@special_offer');
+
+$router->get('wishlist', ['uses' => 'WishlistController@list' , 'middleware' => ['cors', 'jwtauth']]);
+$router->delete('wishlist', ['uses' => 'WishlistController@destroy' , 'middleware' => ['cors', 'jwtauth']]);
+$router->post('wishlist', ['uses' => 'WishlistController@add' , 'middleware' => ['cors', 'jwtauth']]);
+
+$router->get('search/product/{category}', 'ProductController@category');
+
 $router->post('shipping', 'ShippingController@getData');
+
+$router->get('ads-home', ['uses' => 'BannerController@ads', 'middleware' => ['cors']]);
 
 $router->get('checkout', ['uses' => 'CheckoutController@store', 'middleware' => ['cors', 'jwtauth']]);
 
+$router->get('product/most-viewed', ['uses' => 'ProductController@most_viewed', 'middleware' => ['cors']]);
+
 $router->get('banner_slideshow', ['uses' => 'BannerController@slideshow', 'middleware' => ['cors']]);
+$router->get('our_product', ['uses' => 'BannerController@our_product', 'middleware' => ['cors']]);
+$router->get('category_home', ['uses' => 'BannerController@category_home', 'middleware' => ['cors']]);
 
 $router->get('user/info', ['uses' => 'MemberController@getUser', 'middleware' => ['cors', 'jwtauth']]);
 $router->get('member/place/list', ['uses' => 'MemberController@place_list' , 'middleware' => ['cors', 'jwtauth']]);

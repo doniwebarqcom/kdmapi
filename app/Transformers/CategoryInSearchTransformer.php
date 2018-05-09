@@ -18,7 +18,7 @@ class CategoryInSearchTransformer extends TransformerAbstract
             'id'            => $Category->id,
             'name'          => $Category->name,
             'fullname'      => $Category->full_name,
-            'url'           => $Category->permalink,
+            'permalink'     => $Category->permalink,
         ];
 
         return $item;

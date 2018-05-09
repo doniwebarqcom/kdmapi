@@ -7,7 +7,9 @@ use App\Transformers\CartItemTransformer;
 use App\Transformers\ProductTransformer;
 use App\Transformers\KodamiProductTransformer;
 use Carbon\Carbon;
+use DB;
 use Kodami\Models\Mysql\CartItem;
+use Kodami\Models\Mysql\Category;
 use Kodami\Models\Mysql\Koprasi;
 use Kodami\Models\Mysql\Product;
 use Kodami\Models\Mysql\KodamiProduct;
@@ -33,14 +35,43 @@ class ProductController extends ApiController
 
     public function getData($alias)
     {
-    	$product = KodamiProduct::where('name_alias', strtolower(trim($alias)))->first();
+    	$product = KodamiProduct::where('name_alias', strtolower(trim($alias)))->where('status', 1)->first();
 		return $this->response()->success($product, [] , 200, new KodamiProductTransformer(), 'item', null, ['spesification']);
-    }    
+    }
 
+    public function category($category)
+    {
+    	$data_category = Category::where(DB::raw('lower(permalink)'), strtolower($category))->first();
+    	if(! $data_category)
+    		return $this->response()->success([]);
+
+    	$child_data = $data_category->collection_child;
+    	$child = explode(',', $child_data);
+    	if($child[0] == "")
+    		$child[0] = $data_category->id;
+    	else
+    		$child[] = $data_category->id;
+
+    	foreach ($child as $key => $value) {
+    		$child[$key] = (int) $value;
+    	}
+    	
+        $limit = $this->request->get('limit') ? $this->request->get('limit') : 15;
+        $product = KodamiProduct::whereIn('category_id', $child)->where('status', 1)->paginate($limit);
+        $pagination = new CostumePagination($product);     
+        $result = $pagination->render();           
+    	
+    	return $this->response()->success($result['data'], ['paging' => $result['paging']] , 200, new KodamiProductTransformer(), 'collection');
+    }
+
+    public function most_viewed()
+    {
+    	$product = KodamiProduct::where('status', 1)->orderBy('viewer', 'DESC')->limit(20)->get();
+    	return $this->response()->success($product, [] , 200, new KodamiProductTransformer(), 'collection');
+    }
     
     public function input(JWTAuth $JWTAuth)
-    {     
-    	
+    {         	
     	$user =  $JWTAuth->parseToken()->authenticate();
     	if($user->shop === null)
 			return $this->response()->error('user dont have shop', 409);
