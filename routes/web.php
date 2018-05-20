@@ -7,6 +7,8 @@ $router->get('/', [
 
 
 $router->get('rajaongkir', 'ExampleController@rajaongkir');
+$router->get('rajaongkir/province', 'ExampleController@rajaongkirProvince');
+$router->get('rajaongkir/city', 'ExampleController@rajaongkirCity');
 
 $router->get('special-offer', 'BannerController@special_offer');
 
