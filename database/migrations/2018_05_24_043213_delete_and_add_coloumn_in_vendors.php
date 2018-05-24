@@ -18,7 +18,7 @@ class DeleteAndAddColoumnInVendors extends Migration
             $table->dropColumn('currency');
             $table->string('password')->after('name')->nullable();
             $table->string('username')->after('name')->nullable();
-            $table->string('detail_address')->after('email')->nullable();
+            $table->text('detail_address')->after('email')->nullable();
             $table->integer('regency_id')->length(5)->after('email')->unsigned()->nullable();
             $table->integer('member_id')->length(5)->after('id')->unsigned()->nullable();
 
