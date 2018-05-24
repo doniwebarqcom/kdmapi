@@ -28,7 +28,7 @@ class KodamiProductTransformer extends TransformerAbstract
             'total_comment'         => (int) $product->total_comment,
             'weight'                => (double) $product->weight,
             'viewer'                => (int) $product->viewer,
-            'stock'                 => (int) $product->stock,
+            'stock'                 => (int) $product->stock(),
             'new'                   => $product->new,
             'discont'               => $product->discont,
             'discont_anggota'       => $product->discont_anggota,
