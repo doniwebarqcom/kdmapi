@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class RequestForQuotationProduct extends Model
 {
 	use SoftDeletes;
+	
 }
