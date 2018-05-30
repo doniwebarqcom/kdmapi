@@ -42,7 +42,7 @@ class ProductController extends ApiController
 
     public function suggest()
     {
-        $category = $this->request->get('category_id') ? (int) $this->request->get('category_id') : 0;
+        $category = $this->request->get('category') ? (int) $this->request->get('category') : 0;
         if($category === 0)
             return $this->response()->success([]);
 
@@ -126,6 +126,7 @@ class ProductController extends ApiController
 		if ($validator->fails())
 			return $this->response()->error($validator->errors()->all());
 
+        $suggest_kodami_product = (int) $this->request->get('suggest_kodami_product');
 		$name = $this->request->get('name');
 		$category_id = (int) $this->request->get('category');
 		$description = $this->request->get('description');
@@ -145,6 +146,7 @@ class ProductController extends ApiController
 		$grosir_until = $this->request->get('grosir_until') ? $this->request->get('grosir_until') : [];
 		$grosir_price = $this->request->get('grosir_price') ? $this->request->get('grosir_price') : [];
 
+
 		if($new == true)
 			$new = 1;
 		else
@@ -159,6 +161,12 @@ class ProductController extends ApiController
 		$name_alias = str_replace("_", "-", $name_alias);
 
 		$product = new Product();
+
+        // check if kodami product exist
+        $kodamiP = KodamiProduct::find($suggest_kodami_product);
+        if($kodamiP)
+            $product->suggest_kodami_product_id = $suggest_kodami_product;
+
 		$product->koprasi_id = $user->shop->id;
 		$product->category_id = $category_id;
 		$product->name = $name;		
