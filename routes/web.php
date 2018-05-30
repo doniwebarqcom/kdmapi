@@ -17,6 +17,7 @@ $router->delete('wishlist', ['uses' => 'WishlistController@destroy' , 'middlewar
 $router->post('wishlist', ['uses' => 'WishlistController@add' , 'middleware' => ['cors', 'jwtauth']]);
 
 $router->get('search/product/{category}', 'ProductController@category');
+$router->get('suggest/product/', 'ProductController@suggest');
 
 $router->post('shipping', 'ShippingController@getData');
 

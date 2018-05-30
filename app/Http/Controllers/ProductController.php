@@ -6,6 +6,7 @@ use App\Repositories\CostumePagination;
 use App\Transformers\CartItemTransformer;
 use App\Transformers\ProductTransformer;
 use App\Transformers\KodamiProductTransformer;
+use App\Transformers\KodamiProductMiniTransformer;
 use Carbon\Carbon;
 use DB;
 use Kodami\Models\Mysql\CartItem;
@@ -38,6 +39,35 @@ class ProductController extends ApiController
     	$product = KodamiProduct::where('name_alias', strtolower(trim($alias)))->where('status', 1)->first();
 		return $this->response()->success($product, [] , 200, new KodamiProductTransformer(), 'item', null, ['spesification']);
     }
+
+    public function suggest()
+    {
+        $category = $this->request->get('category_id') ? (int) $this->request->get('category_id') : 0;
+        if($category === 0)
+            return $this->response()->success([]);
+
+        $data_category = Category::find($category);
+        if(! $data_category)
+            return $this->response()->success([]);
+
+        $child_data = $data_category->collection_child;
+        $child = explode(',', $child_data);
+        if($child[0] == "")
+            $child[0] = $data_category->id;
+        else
+            $child[] = $data_category->id;
+
+        foreach ($child as $key => $value) {
+            $child[$key] = (int) $value;
+        }
+        
+        $limit = $this->request->get('limit') ? $this->request->get('limit') : 100;
+        $product = KodamiProduct::whereIn('category_id', $child)->where('status', 1)->paginate($limit);
+        $pagination = new CostumePagination($product);     
+        $result = $pagination->render();           
+        
+        return $this->response()->success($result['data'], ['paging' => $result['paging']] , 200, new KodamiProductMiniTransformer(), 'collection');
+    }        
 
     public function category($category)
     {
