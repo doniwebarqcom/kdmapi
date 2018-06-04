@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Transformers\MemberTransformer;
 use App\Transformers\MemberPlacePickupTransformer;
+use App\Transformers\ListTransactionsTransformer;
 use Illuminate\Support\Facades\Hash;
 use Kodami\Models\Mysql\Member;
 use Kodami\Models\Mysql\MemberPlacePickup;
+use Kodami\Models\Mysql\Transaction;
 use Kodami\Models\Mysql\RegistrationMemberByPhone;
 use Tymon\JWTAuth\JWTAuth;
 use Nexmo\Laravel\Facade\Nexmo;
@@ -51,6 +53,14 @@ class MemberController extends ApiController
     	
         $token = $JWTAuth->fromUser($member);
         return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');
+    }
+
+    public function list_transaction(JWTAuth $JWTAuth)
+    {
+        $member =  $JWTAuth->parseToken()->authenticate();
+        $token = $JWTAuth->fromUser($member);
+        $transaction = Transaction::where('member_id', $member->id)->get();
+        return $this->response()->success($transaction, ['meta.token' => $token] , 200, new ListTransactionsTransformer(), 'collection', null, ['items']);
     }
 
     public function login(JWTAuth $JWTAuth)

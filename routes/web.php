@@ -10,8 +10,9 @@ $router->get('rajaongkir', 'ExampleController@rajaongkir');
 $router->get('rajaongkir/province', 'ExampleController@rajaongkirProvince');
 $router->get('rajaongkir/city', 'ExampleController@rajaongkirCity');
 
-$router->get('special-offer', 'BannerController@special_offer');
+$router->get('transaction/list', ['uses' => 'MemberController@list_transaction' , 'middleware' => ['cors', 'jwtauth']]);
 
+$router->get('special-offer', 'BannerController@special_offer');
 $router->get('wishlist', ['uses' => 'WishlistController@list' , 'middleware' => ['cors', 'jwtauth']]);
 $router->delete('wishlist', ['uses' => 'WishlistController@destroy' , 'middleware' => ['cors', 'jwtauth']]);
 $router->post('wishlist', ['uses' => 'WishlistController@add' , 'middleware' => ['cors', 'jwtauth']]);
