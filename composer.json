@@ -12,7 +12,7 @@
         "barryvdh/laravel-cors": "^0.10.0",
         "kodami/models": "dev-master",
         "league/fractal": "^0.17.0",
-        "doctrine/dbal": "^2.5",
+        "doctrine/dbal": "2.6.3",
         "jrm2k6/cloudder": "0.4.*",
         "nexmo/laravel": "^1.0"
     },
