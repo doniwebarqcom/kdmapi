@@ -12,6 +12,7 @@ class MemberTransformer extends TransformerAbstract
         $data =  [
             'id'                => (int) $member->id,
             'email'             => $member->email,
+            'saldo'             => (double) $member->saldo,
             'name'              => $member->name,
             'gender'            => (int) $member->gender,
             'username'          => $member->username,
