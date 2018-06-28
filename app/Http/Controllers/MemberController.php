@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use App\Transformers\MemberTransformer;
 use App\Transformers\MemberPlacePickupTransformer;
 use App\Transformers\ListTransactionsTransformer;
@@ -13,6 +14,7 @@ use Kodami\Models\Mysql\RegistrationMemberByPhone;
 use Tymon\JWTAuth\JWTAuth;
 use Nexmo\Laravel\Facade\Nexmo;
 use Validator;
+use DB;
 
 class MemberController extends ApiController
 {
@@ -55,12 +57,47 @@ class MemberController extends ApiController
         return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');
     }
 
+    public function isi_saldo(JWTAuth $JWTAuth)
+    {
+        $member =  $JWTAuth->parseToken()->authenticate();
+        $token = $JWTAuth->fromUser($member);
+        $transaction = new Transaction;    
+        $total_transaction = (int) (DB::table('transactions')->count() + 1);
+        $transaction_code = random_trasaction_code($total_transaction);
+
+        $transaction->member_id = $member->id;
+        $transaction->type_transaction = 2;
+        $transaction->price_product = $this->request->get('saldo');;
+        $transaction->transaction_code = $transaction_code;
+        $transaction->fee_random = quickRandomNumber();
+        $transaction->save();
+
+        return $this->response()->success($transaction, ['meta.token' => $token] , 200, new ListTransactionsTransformer());
+    }
+
+    public function pending_top_up(JWTAuth $JWTAuth)
+    {
+        $member =  $JWTAuth->parseToken()->authenticate();
+        $token = $JWTAuth->fromUser($member);
+        $transaction = Transaction::where('member_id', $member->id)->where('type_transaction', 2)->where('status', 0)->get();
+        return $this->response()->success($transaction, ['meta.token' => $token] , 200, new ListTransactionsTransformer(), 'collection');
+    }
+
     public function list_transaction(JWTAuth $JWTAuth)
     {
         $member =  $JWTAuth->parseToken()->authenticate();
         $token = $JWTAuth->fromUser($member);
         $transaction = Transaction::where('member_id', $member->id)->get();
         return $this->response()->success($transaction, ['meta.token' => $token] , 200, new ListTransactionsTransformer(), 'collection', null, ['items']);
+    }
+
+    public function detail_transaction($transaction_code, JWTAuth $JWTAuth)
+    {
+        $member =  $JWTAuth->parseToken()->authenticate();
+        $token = $JWTAuth->fromUser($member);
+        $transaction = Transaction::where('member_id', $member->id)->where('transaction_code', $transaction_code)->first();
+
+        return $this->response()->success($transaction, ['meta.token' => $token] , 200, new ListTransactionsTransformer(), 'item', null, ['items']);
     }
 
     public function login(JWTAuth $JWTAuth)
@@ -204,6 +241,57 @@ class MemberController extends ApiController
         } else if(! isset($member) AND ! isset($register) )
             return $this->response()->error("data not found");
         
+        $token = $JWTAuth->fromUser($member);
+        return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');
+    }
+
+    public function login_by_anggota(JWTAuth $JWTAuth)
+    {
+        // $user = new User;
+        // $user->nik =  1234567890;
+        // $user->no_anggota =  1234567890;
+        // $user->password =  Hash::make('admin');
+        // $user->save();
+
+        $rules = [
+            'password' => 'required',
+            'no_anggota'  => 'required',
+        ];
+
+        $validator = Validator::make(
+            $this->request->all(),
+            $rules
+        );
+
+        if ($validator->fails())
+            return $this->response()->error($validator->errors()->all());
+
+        $user = User::where('no_anggota',  $this->request->get('no_anggota'))->first();
+
+        $password = $this->request->get('password');
+
+        if( ! $user OR ! (Hash::check($password, $user->password)))
+            return $this->response()->error("Wrong No Anggota or Password");
+
+        $member = Member::where('user_id', $user->id)->orWhere('email' , $user->email)->first();
+
+        if($member)
+        {
+            $member->email = $user->email;
+            $member->user_id = $user->id;
+        } else {
+            $member = new Member;
+            $member->name   = $user->name;
+            $member->user_id = $user->id;
+            $member->email  = $user->email;
+            $member->username   = $user->no_anggota;
+            $member->password   = Hash::make($password);
+            $member->address    = "";
+            $member->phone  = $user->telepon ? $user->telepon : $user->no_anggota;
+        }
+
+        $member->save();
+
         $token = $JWTAuth->fromUser($member);
         return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');
     }

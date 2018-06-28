@@ -28,7 +28,8 @@ class CheckoutController extends ApiController
     		$transaction_code = random_trasaction_code($total_transaction);
 
     		$transaction->member_id = $member->id;
-    		$transaction->transaction_code = $transaction_code;
+            $transaction->transaction_code = $transaction_code;
+    		$transaction->admin_fee = quickRandomNumber();
 
     		if(! $transaction->save())
     			return $this->response()->error('error save transaction');

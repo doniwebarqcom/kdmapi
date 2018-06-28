@@ -10,12 +10,16 @@ $router->get('rajaongkir', 'ExampleController@rajaongkir');
 $router->get('rajaongkir/province', 'ExampleController@rajaongkirProvince');
 $router->get('rajaongkir/city', 'ExampleController@rajaongkirCity');
 
+$router->get('transaction/{transaction_code}/detail', ['uses' => 'MemberController@detail_transaction' , 'middleware' => ['cors', 'jwtauth']]);
 $router->get('transaction/list', ['uses' => 'MemberController@list_transaction' , 'middleware' => ['cors', 'jwtauth']]);
+$router->get('pending/top_up', ['uses' => 'MemberController@pending_top_up' , 'middleware' => ['cors', 'jwtauth']]);
 
 $router->get('special-offer', 'BannerController@special_offer');
 $router->get('wishlist', ['uses' => 'WishlistController@list' , 'middleware' => ['cors', 'jwtauth']]);
 $router->delete('wishlist', ['uses' => 'WishlistController@destroy' , 'middleware' => ['cors', 'jwtauth']]);
 $router->post('wishlist', ['uses' => 'WishlistController@add' , 'middleware' => ['cors', 'jwtauth']]);
+
+$router->post('isi/saldo', ['uses' => 'MemberController@isi_saldo' , 'middleware' => ['cors', 'jwtauth']]);
 
 $router->get('search/product/{category}', 'ProductController@category');
 $router->get('suggest/product', 'ProductController@suggest');
@@ -39,6 +43,7 @@ $router->post('member/register', ['uses' => 'MemberController@register', 'middle
 $router->post('member/login/phone', ['uses' => 'MemberController@phone', 'middleware' => ['cors']]);
 $router->post('cek/code/register', ['uses' => 'MemberController@cekCode', 'middleware' => ['cors']]);
 $router->post('member/login', ['uses' => 'MemberController@login', 'middleware' => ['cors']]);
+$router->post('member/login/anggota', ['uses' => 'MemberController@login_by_anggota', 'middleware' => ['cors']]);
 $router->post('register/user/byphone', ['uses' => 'MemberController@registerByPhone', 'middleware' => ['cors']]);
 $router->post('member/edit/image', ['uses' => 'MemberController@upload_image' , 'middleware' => ['cors', 'jwtauth']]);
 $router->post('member/edit/profile', ['uses' => 'MemberController@profile_store' , 'middleware' => ['cors', 'jwtauth']]);
