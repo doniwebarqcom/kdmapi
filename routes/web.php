@@ -37,6 +37,9 @@ $router->get('our_product', ['uses' => 'BannerController@our_product', 'middlewa
 $router->get('category_home', ['uses' => 'BannerController@category_home', 'middleware' => ['cors']]);
 
 $router->get('user/info', ['uses' => 'MemberController@getUser', 'middleware' => ['cors', 'jwtauth']]);
+
+$router->get('member/dana/simpanan_anggota', ['uses' => 'MemberController@dana_simpanan_anggota' , 'middleware' => ['cors', 'jwtauth']]);
+$router->get('member/koprasi/product/validated', ['uses' => 'MemberController@product_validated' , 'middleware' => ['cors', 'jwtauth']]);
 $router->get('member/place/list', ['uses' => 'MemberController@place_list' , 'middleware' => ['cors', 'jwtauth']]);
 $router->post('member/place/get', ['uses' => 'Member\PlaceController@getPlace' , 'middleware' => ['cors', 'jwtauth']]);
 $router->post('member/register', ['uses' => 'MemberController@register', 'middleware' => ['cors']]);
@@ -60,7 +63,7 @@ $router->get('category-insearch', ['uses' => 'CategoryController@search', 'middl
 $router->post('shop/register', ['uses' => 'ShopController@register', 'middleware' => ['cors', 'jwtauth']]);
 
 $router->post('product/input', ['uses' => 'ProductController@input', 'middleware' => ['cors', 'jwtauth']]);
-$router->get('product/list', ['uses' => 'ProductController@list', 'middleware' => ['cors']]);
+$router->get('product/list', ['uses' => 'ProductController@list', 'middleware' => ['cors', 'jwtauth']]);
 
 $router->get('place/province', ['uses' => 'PlaceController@getProvince', 'middleware' => ['cors']]);
 $router->get('place/regency', ['uses' => 'PlaceController@getRegency', 'middleware' => ['cors']]);

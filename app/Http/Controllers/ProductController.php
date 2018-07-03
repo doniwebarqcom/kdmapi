@@ -266,13 +266,19 @@ class ProductController extends ApiController
         return $this->response()->success($product, ['meta.token' => $token] , 200, new ProductTransformer(), 'item');
     }
 
-    public function list()
-    {
-    	$q = $this->request->get('query') ? $this->request->get('query') : null;
+    public function list(JWTAuth $JWTAuth)
+    {        
+    	$member =  $JWTAuth->parseToken()->authenticate();
+        $token = $JWTAuth->fromUser($member);
+        if(! $member->shop)
+            return $this->response()->error("User dont have koprasi");
+
+        $q = $this->request->get('query') ? $this->request->get('query') : null;
         $limit = $this->request->get('limit') ? $this->request->get('limit') : 10;
-        $post = Product::paginate($limit);
+        $post = Product::where('koprasi_id', $member->shop->id)->paginate($limit);
         $pagination = new CostumePagination($post);     
-        $result = $pagination->render();           
-    	return $this->response()->success($result['data'], ['paging' => $result['paging']] , 200, new ProductTransformer(), 'collection');
+        $result = $pagination->render();
+
+        return $this->response()->success($result['data'], ['meta.token' => $token, 'paging' => $result['paging']] , 200, new ProductTransformer(), 'collection');
     }    
 }

@@ -3,14 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Repositories\CostumePagination;
 use App\Transformers\MemberTransformer;
 use App\Transformers\MemberPlacePickupTransformer;
 use App\Transformers\ListTransactionsTransformer;
+use App\Transformers\ProductTransformer;
 use Illuminate\Support\Facades\Hash;
+use Kodami\Models\Mysql\Deposit;
 use Kodami\Models\Mysql\Member;
 use Kodami\Models\Mysql\MemberPlacePickup;
 use Kodami\Models\Mysql\Transaction;
+use Kodami\Models\Mysql\Product;
 use Kodami\Models\Mysql\RegistrationMemberByPhone;
+use Kodami\Models\Mysql\Withdrawal;
 use Tymon\JWTAuth\JWTAuth;
 use Nexmo\Laravel\Facade\Nexmo;
 use Validator;
@@ -57,21 +62,105 @@ class MemberController extends ApiController
         return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');
     }
 
-    public function isi_saldo(JWTAuth $JWTAuth)
+    public function product_validated(JWTAuth $JWTAuth)
     {
         $member =  $JWTAuth->parseToken()->authenticate();
         $token = $JWTAuth->fromUser($member);
-        $transaction = new Transaction;    
+        if(! $member->shop)
+            return $this->response()->error("User dont have koprasi");
+
+        $q = $this->request->get('query') ? $this->request->get('query') : null;
+        $limit = $this->request->get('limit') ? $this->request->get('limit') : 10;
+        $post = Product::where('koprasi_id', $member->shop->id)->whereNotNull('kodami_product_id')->where('is_validate', 1)->paginate($limit);
+        $pagination = new CostumePagination($post);     
+        $result = $pagination->render();
+
+        return $this->response()->success($result['data'], ['meta.token' => $token, 'paging' => $result['paging']] , 200, new ProductTransformer(), 'collection');
+    }
+
+    public function isi_saldo(JWTAuth $JWTAuth)
+    {
+        $rules = [
+            'saldo'      => 'required',
+            'type'     => 'required',
+            'type_transaction'  => 'required'
+        ];
+
+        $validator = Validator::make(
+            $this->request->all(),
+            $rules
+        );
+
+        if ($validator->fails())
+            return $this->response()->error($validator->errors()->all());
+        
+        $type = $this->request->get('type');        
+        $member =  $JWTAuth->parseToken()->authenticate();                
+
+        if(! ($type != 1 OR $type != 2))
+            return $this->response()->error('Wrong Type');
+
+        $status = 0;
+        if($type == 2)
+        {
+            $dana = 0;
+
+            if(! is_null($member->user_id))
+            {
+                $in = Deposit::groupBy('user_id')
+                        ->selectRaw('sum(nominal) as sum')
+                        ->where('user_id', $member->user_id)
+                        ->where('status', 1)
+                        ->first();
+                $total_in = $in->sum ? $in->sum : 0;
+
+                $out = Withdrawal::groupBy('user_id')
+                        ->selectRaw('sum(nominal) as sum')
+                        ->where('user_id', $member->user_id)
+                        ->where('status', 1)
+                        ->first();
+
+                $total_out = $out->sum ? $out->sum : 0;
+
+                $dana = $total_in - $total_out;
+            }else
+                return $this->response()->error('Not Member of Kodami');                
+            
+            if($dana < $this->request->get('saldo'))
+                return $this->response()->error("Saldo Member's Koprasi not enougth");
+
+            $no_invoice  = (Withdrawal::count()+1).$member->user_id.'/INV/KDM/'. date('d').date('m').date('y');
+
+            $withdrawal = new Withdrawal;
+            $withdrawal->no_invoice = $no_invoice;
+            $withdrawal->user_id = $member->user_id;
+            $withdrawal->nominal = (int) $this->request->get('saldo');
+            $withdrawal->status = 1;
+            $withdrawal->type = $this->request->get('saldo');
+            $withdrawal->save();
+
+            $status = 1;
+        }
+        
         $total_transaction = (int) (DB::table('transactions')->count() + 1);
         $transaction_code = random_trasaction_code($total_transaction);
 
+        $transaction = new Transaction;        
         $transaction->member_id = $member->id;
-        $transaction->type_transaction = 2;
-        $transaction->price_product = $this->request->get('saldo');;
         $transaction->transaction_code = $transaction_code;
+        $transaction->status = $status;
         $transaction->fee_random = quickRandomNumber();
+        $transaction->price_product = $this->request->get('saldo');
+        $transaction->type_transaction = $this->request->get('type_transaction');
         $transaction->save();
 
+        if($type == 2)
+        {
+            $member->saldo += $this->request->get('saldo');
+            $member->save();
+        }
+
+        $token = $JWTAuth->fromUser($member);
         return $this->response()->success($transaction, ['meta.token' => $token] , 200, new ListTransactionsTransformer());
     }
 
@@ -245,14 +334,33 @@ class MemberController extends ApiController
         return $this->response()->success($member, ['meta.token' => $token] , 200, new MemberTransformer(), 'item');
     }
 
+    public function dana_simpanan_anggota(JWTAuth $JWTAuth)
+    {
+        $member =  $JWTAuth->parseToken()->authenticate();
+        if(is_null($member->user_id))
+            return $this->response()->success(['dana' => 0]);
+        
+        $in = Deposit::groupBy('user_id')
+                ->selectRaw('sum(nominal) as sum')
+                ->where('user_id', $member->user_id)
+                ->where('status', 1)
+                ->first();
+        $total_in = $in->sum ? $in->sum : 0;
+
+        $out = Withdrawal::groupBy('user_id')
+                ->selectRaw('sum(nominal) as sum')
+                ->where('user_id', $member->user_id)
+                ->where('status', 1)
+                ->first();
+
+        $total_out = $out->sum ? $out->sum : 0;
+
+        $dana = $total_in - $total_out;
+        return $this->response()->success(['dana' => $dana]);
+    }
+
     public function login_by_anggota(JWTAuth $JWTAuth)
     {
-        // $user = new User;
-        // $user->nik =  1234567890;
-        // $user->no_anggota =  1234567890;
-        // $user->password =  Hash::make('admin');
-        // $user->save();
-
         $rules = [
             'password' => 'required',
             'no_anggota'  => 'required',
@@ -269,7 +377,7 @@ class MemberController extends ApiController
         $user = User::where('no_anggota',  $this->request->get('no_anggota'))->first();
 
         $password = $this->request->get('password');
-
+        
         if( ! $user OR ! (Hash::check($password, $user->password)))
             return $this->response()->error("Wrong No Anggota or Password");
 

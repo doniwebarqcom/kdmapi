@@ -14,6 +14,7 @@ class MemberTransformer extends TransformerAbstract
             'email'             => $member->email,
             'saldo'             => (double) $member->saldo,
             'name'              => $member->name,
+            'anggota'           => $member->user_id ? true : false,
             'gender'            => (int) $member->gender,
             'username'          => $member->username,
             'phone'             => $member->phone,            
