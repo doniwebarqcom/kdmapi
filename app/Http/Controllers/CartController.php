@@ -36,9 +36,11 @@ class CartController extends ApiController
 			$cart->quantity += $quantity;
 
 
-		$weight = ceil($cart->quantity * $product->weight);
-    	$shipping = rajaOngkirApi('cost', 'POST', 'origin=501&destination=114&weight='.$weight.'&courier=jne');
-    	$result_shipping = isset($shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value']) ? $shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value'] : 0;
+		// $weight = ceil($cart->quantity * $product->weight);
+		//$shipping = rajaOngkirApi('cost', 'POST', 'origin=501&destination=114&weight='.$weight.'&courier=jne');
+		//$result_shipping = isset($shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value']) ? $shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value'] : 0;
+
+		$result_shipping = 0;
 
 		$cart->member_id = $member->id;
 		$cart->shipping_cost = $result_shipping;
@@ -54,11 +56,12 @@ class CartController extends ApiController
 		
 		if(! $cart->save())
 			return $this->response()->error('failed save cart');
-	
-		return $this->response()->success($cart);
+		
+		$token = $JWTAuth->fromUser($member);
+		return $this->response()->success($cart, ['meta.token' => $token]);
 	}
 
-	public function update()
+	public function update(JWTAuth $JWTAuth)
 	{		
 		$cart_id = $this->request->cart_id;
 		$cart = CartItem::find($cart_id);
@@ -69,10 +72,11 @@ class CartController extends ApiController
     	if(! $product)
     		return $this->response()->error('product not found');
 
-    	$weight = ceil($this->request->quantity * $product->weight);
-    	$shipping = rajaOngkirApi('cost', 'POST', 'origin=501&destination=114&weight='.$weight.'&courier=jne');
-    	$result_shipping = isset($shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value']) ? $shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value'] : 0;
-		
+    	//$weight = ceil($this->request->quantity * $product->weight);
+    	// $shipping = rajaOngkirApi('cost', 'POST', 'origin=501&destination=114&weight='.$weight.'&courier=jne');
+    	// $result_shipping = isset($shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value']) ? $shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value'] : 0;
+		$result_shipping = 0;
+
 		$cart->quantity = $this->request->quantity;
 		$cart->product_price = $product->price;
 		$cart->product_name = $product->name;
@@ -81,8 +85,9 @@ class CartController extends ApiController
 
 		if(! $cart->save())
 			return $this->response()->error('failed save cart');
-	
-		return $this->response()->success($cart);
+		
+		$token = $JWTAuth->fromUser($member);
+		return $this->response()->success($cart, ['meta.token' => $token]);
 	}
 
 	public function withNewPlace(JWTAuth $JWTAuth)
@@ -131,9 +136,10 @@ class CartController extends ApiController
 		else
 			$cart->quantity = 1;
 
-		$weight = ceil($cart->quantity * $product->weight);
-    	$shipping = rajaOngkirApi('cost', 'POST', 'origin=501&destination=114&weight='.$weight.'&courier=jne');
-    	$result_shipping = isset($shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value']) ? $shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value'] : 0;
+		//$weight = ceil($cart->quantity * $product->weight);
+    	//$shipping = rajaOngkirApi('cost', 'POST', 'origin=501&destination=114&weight='.$weight.'&courier=jne');
+    	//$result_shipping = isset($shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value']) ? $shipping['rajaongkir']['results'][0]['costs'][0]['cost'][0]['value'] : 0;
+		$result_shipping = 0;
 
 		$cart->shipping_cost = $result_shipping;
 		$cart->member_id = $member->id;
@@ -149,23 +155,25 @@ class CartController extends ApiController
 		
 		if(! $cart->save())
 			return $this->response()->error('failed save cart');
-	
-		return $this->response()->success($cart);	
-
+		
+		$token = $JWTAuth->fromUser($member);
+		return $this->response()->success($cart, ['meta.token' => $token]);	
 	}
 
 	public function list(JWTAuth $JWTAuth)
     {
 		$member =  $JWTAuth->parseToken()->authenticate();
 		$cart = CartItem::where('member_id', $member->id)->get();
-		return $this->response()->success($cart, [] , 200, new CartItemTransformer(), 'collection', null, ['product']);
+		$token = $JWTAuth->fromUser($member);
+		return $this->response()->success($cart, ['meta.token' => $token] , 200, new CartItemTransformer(), 'collection', null, ['product']);
     }
 
-	public function destroy_cart($id)
+	public function destroy_cart($id, JWTAuth $JWTAuth)
     {
     	$cart = CartItem::find($id);
     	$cart->delete();
-    	return $this->response()->success('succes');	
+    	$token = $JWTAuth->fromUser($member);
+    	return $this->response()->success('succes' , ['meta.token' => $token]);	
     }
 
     public function addCart($product, JWTAuth $JWTAuth)
@@ -200,7 +208,8 @@ class CartController extends ApiController
 
 		if(! $cart->save())
 			return $this->response()->error('failed save cart');
-	
-		return $this->response()->success($cart);
+		
+		$token = $JWTAuth->fromUser($member);
+		return $this->response()->success($cart, ['meta.token' => $token]);
     }
 }

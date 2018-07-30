@@ -31,7 +31,7 @@ class BannerController extends ApiController
 
 	public function category_home()
 	{
-		$categoryhome = CategoryHome::where('status', 1)->get();
+		$categoryhome = CategoryHome::get();
 		return $this->response()->success($categoryhome, [] , 200, new CategoryHomeTransformer(), 'collection', null, ['product']);
 	}
 

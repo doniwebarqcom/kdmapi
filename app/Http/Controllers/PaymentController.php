@@ -23,10 +23,10 @@ class PaymentController extends ApiController
 		return $this->response()->success($transaction);
 	}
 
-	public function bill(JWTAuth $JWTAuth)
+	public function bill($invoice, JWTAuth $JWTAuth)
 	{
 		$member =  $JWTAuth->parseToken()->authenticate();
-		$transaction = Transaction::where('member_id', $member->id)->where('status', 1)->first();
+		$transaction = Transaction::where('member_id', $member->id)->where('transaction_code', $invoice)->first();
 		return $this->response()->success($transaction);
 	}
 }

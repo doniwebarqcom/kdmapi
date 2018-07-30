@@ -13,7 +13,7 @@ use Validator;
 class CheckoutController extends ApiController
 {
     public function store(JWTAuth $JWTAuth)
-    {   
+    {
     	$member =  $JWTAuth->parseToken()->authenticate();
 		$cart = CartItem::where('member_id', $member->id)->get();
 		$transaction = Transaction::where('member_id', $member->id)->where('status', 0)->first();
@@ -29,7 +29,8 @@ class CheckoutController extends ApiController
 
     		$transaction->member_id = $member->id;
             $transaction->transaction_code = $transaction_code;
-    		$transaction->admin_fee = quickRandomNumber();
+            $transaction->fee_random = quickRandomNumber();
+    		$transaction->status = 0;
 
     		if(! $transaction->save())
     			return $this->response()->error('error save transaction');

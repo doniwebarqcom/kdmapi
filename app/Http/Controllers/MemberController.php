@@ -139,7 +139,7 @@ class MemberController extends ApiController
             $withdrawal->type = $this->request->get('saldo');
             $withdrawal->save();
 
-            $status = 1;
+            $status = 2;
         }
         
         $total_transaction = (int) (DB::table('transactions')->count() + 1);
@@ -176,7 +176,7 @@ class MemberController extends ApiController
     {
         $member =  $JWTAuth->parseToken()->authenticate();
         $token = $JWTAuth->fromUser($member);
-        $transaction = Transaction::where('member_id', $member->id)->get();
+        $transaction = Transaction::where('member_id', $member->id)->where('type_transaction', 1)->get();
         return $this->response()->success($transaction, ['meta.token' => $token] , 200, new ListTransactionsTransformer(), 'collection', null, ['items']);
     }
 
