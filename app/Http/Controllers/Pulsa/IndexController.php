@@ -26,17 +26,20 @@ class IndexController extends ApiController
      * @param  JWTAuth $JWTAuth [description]
      * @return [type]           [description]
      */
-    public function response_post(JWTAuth $JWTAuth)
+    public function response_post()
     {
         $response['status'] = 'success';
         $response['code'] = '200';
 
-        // record post
-       	$data 				       = new \Kodami\Models\Mysql\PPulsaResponse();
-       	$data->reffid 	     = $this->request->refid;
-       	$data->pesan 		     = $this->request->message;
-       	$data->result_post 	 = json_encode($this->request->all());
-       	$data->save(); 
+        if(isset($this->request->refid))
+        {
+          // record post
+         	$data 				       = new \Kodami\Models\Mysql\PPulsaResponse();
+         	$data->reffid 	     = $this->request->refid;
+         	$data->pesan 		     = $this->request->message;
+         	$data->result_post 	 = json_encode($this->request->all());
+         	$data->save(); 
+        }
 
         return $response;
     }
