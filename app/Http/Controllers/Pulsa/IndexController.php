@@ -33,8 +33,8 @@ class IndexController extends ApiController
 
         // record post
        	$data 				       = new \Kodami\Models\Mysql\PPulsaResponse();
-       	$data->reffid 	     = $this->request->reffid;
-       	$data->pesan 		     = $this->request->pesan;
+       	$data->reffid 	     = $this->request->refid;
+       	$data->pesan 		     = $this->request->message;
        	$data->result_post 	 = json_encode($this->request->all());
        	$data->save(); 
 
