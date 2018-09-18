@@ -1,10 +1,14 @@
 <?php
 
+// PULSA
+$router->group(['namespace' => 'Pulsa', 'prefix' => 'pulsa'], function() use($router){
+	$router->post('response', 'IndexController@index');
+});
+
 
 $router->get('/', [
   'uses' => 'ExampleController@index'
 ]);
-
 
 $router->get('rajaongkir', 'ExampleController@rajaongkir');
 $router->get('rajaongkir/province', 'ExampleController@rajaongkirProvince');
