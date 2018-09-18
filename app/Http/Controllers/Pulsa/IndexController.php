@@ -41,6 +41,6 @@ class IndexController extends ApiController
          	$data->save(); 
         }
 
-        return $response;
+        return $this->response()->success($response);
     }
 }
