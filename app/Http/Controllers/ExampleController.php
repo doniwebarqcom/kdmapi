@@ -25,7 +25,7 @@ class ExampleController extends ApiController
     {
         ini_set('max_execution_time', 36000);
 
-        return 1;
+        return ['message' => 'success', 'data'=> [],'code' => 200];
     }
 
     public function rajaongkir()
