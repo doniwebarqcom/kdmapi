@@ -3,14 +3,40 @@
 namespace App\Http\Controllers\Pulsa;
 
 use App\Http\Controllers\ApiController;
+use Tymon\JWTAuth\JWTAuth;
 
 class IndexController extends ApiController
 {
-    public function index()
+	/**
+	 * Index Response
+	 * @param  JWTAuth $JWTAuth [description]
+	 * @return [type]           [description]
+	 */
+    public function index(JWTAuth $JWTAuth)
     {
         $response['status'] = 'success';
         $response['code'] = '200';
         $response['data'] = [];
+
+        return $response;
+    }
+
+    /**
+     * [response description]
+     * @param  JWTAuth $JWTAuth [description]
+     * @return [type]           [description]
+     */
+    public function response_post(JWTAuth $JWTAuth)
+    {
+        $response['status'] = 'success';
+        $response['code'] = '200';
+
+        // record post
+       	$data 				       = new \Kodami\Models\Mysql\PPulsaResponse();
+       	$data->reffid 	     = $this->request->reffid;
+       	$data->pesan 		     = $this->request->pesan;
+       	$data->result_post 	 = json_encode($this->request->all());
+       	$data->save(); 
 
         return $response;
     }

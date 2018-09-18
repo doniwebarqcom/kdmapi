@@ -2,9 +2,8 @@
 
 // PULSA
 $router->group(['namespace' => 'Pulsa', 'prefix' => 'pulsa'], function() use($router){
-	$router->post('response', 'IndexController@index');
+	$router->post('response', 'IndexController@response_post');
 });
-
 
 $router->get('/', [
   'uses' => 'ExampleController@index'
