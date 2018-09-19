@@ -27,10 +27,10 @@ class Response extends ResponseFactory
     {
         $this->request = $request;
 
-        if(empty($_POST))
-            $type = 'GET';
-        else
+        if(isset($_POST))
             $type = 'POST';
+        else
+            $type = 'GET';
 
         $headerValue = "";
         foreach (getallheaders() as $name => $value) {
@@ -38,6 +38,7 @@ class Response extends ResponseFactory
         }
 
         \Illuminate\Support\Facades\Log::info('app.requests', ['request' => $request->all(), 'type' => $type, 'url' => $request->fullUrl(), 'header' => $headerValue ]);        
+        \Illuminate\Support\Facades\Log::info("===========================================================================================================================================");
     }
 
     /**
