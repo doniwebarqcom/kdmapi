@@ -34,11 +34,12 @@ class Response extends ResponseFactory
 
         $headerValue = "";
         foreach (getallheaders() as $name => $value) {
-            $headerValue .="$name: $value\n";
+            $headerValue .="$name: $value \n";
         }
 
-        \Illuminate\Support\Facades\Log::info('app.requests', ['request' => $request->all(), 'type' => $type, 'url' => $request->fullUrl(), 'header' => $headerValue ]);        
         \Illuminate\Support\Facades\Log::info("===========================================================================================================================================");
+        \Illuminate\Support\Facades\Log::info('app.requests', ['request' => $request->all(), 'type' => $type, 'url' => $request->fullUrl(), 'header' => $headerValue ]);        
+        \Illuminate\Support\Facades\Log::info("=========================================================================================================================================== \n\n");
     }
 
     /**
