@@ -43,4 +43,26 @@ class IndexController extends ApiController
 
         return $this->response()->success($response);
     }
+
+    /**
+     * [response_get description]
+     * @return [type] [description]
+     */
+    public function response_get()
+    {
+        $response['status'] = 'success';
+        $response['code'] = '200';
+
+        if(isset($_GET['refid']))
+        {
+          // record post
+            $data                   = new \Kodami\Models\Mysql\PPulsaResponse();
+            $data->reffid           = $_GET['refid'];
+            $data->pesan            = $_GET['message'];
+            $data->result_post      = json_encode($_GET);
+            $data->save(); 
+        }
+
+        return $this->response()->success($response);
+    }
 }
