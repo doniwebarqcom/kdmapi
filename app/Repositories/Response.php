@@ -27,7 +27,7 @@ class Response extends ResponseFactory
     {
         $this->request = $request;
 
-        if(isset($_POST))
+        if($_POST)
             $type = 'POST';
         else
             $type = 'GET';
