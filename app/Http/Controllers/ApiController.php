@@ -17,8 +17,7 @@ class ApiController extends Controller
     }
 
     protected function response($content = '', $status = 200, array $headers = [])
-    {
-
+    {        
         $factory = new \App\Repositories\Response($this->request);
 
         if (func_num_args() === 0) {

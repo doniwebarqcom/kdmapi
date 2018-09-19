@@ -26,6 +26,18 @@ class Response extends ResponseFactory
     public function __construct(Request $request)
     {
         $this->request = $request;
+
+        if(empty($_POST))
+            $type = 'GET';
+        else
+            $type = 'POST';
+
+        $headerValue = "";
+        foreach (getallheaders() as $name => $value) {
+            $headerValue .="$name: $value\n";
+        }
+
+        \Illuminate\Support\Facades\Log::info('app.requests', ['request' => $request->all(), 'type' => $type, 'url' => $request->fullUrl(), 'header' => $headerValue ]);        
     }
 
     /**

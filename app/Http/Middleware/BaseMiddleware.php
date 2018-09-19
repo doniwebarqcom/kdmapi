@@ -16,7 +16,6 @@ class BaseMiddleware extends Base
 
     public function __construct(ResponseFactory $response, Dispatcher $events, JWTAuth $auth)
     {        
-
         $this->response = $response;
         $this->events = $events;
         $this->auth = $auth;
@@ -42,7 +41,7 @@ class BaseMiddleware extends Base
         $result['data'] = (object)[];
         $result['token'] = null;
         $result['timestamp'] = time();
-
+        
         return $response ?: $this->response->json($result, $status);
     }
 }
