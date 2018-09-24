@@ -5,7 +5,7 @@ $router->post('curl-test', function (Illuminate\Http\Request $request){
 	$url = $request->url;
 	if(!$url)
 	{
-		return ['status' => 200, 'message' => 'URL Empty'];
+		return ['status' => 404, 'message' => 'Error', 'data' => 'URL Empty'];
 	}
 	
 	// create curl resource 
@@ -23,8 +23,9 @@ $router->post('curl-test', function (Illuminate\Http\Request $request){
     // close curl resource to free up system resources 
     curl_close($ch);
 
-    return ['status' => 200, 'message' => $output];
+    return ['status' => 200, 'message' => 'success', 'data' => $output];
 });
+
 
 // PULSA
 $router->group(['namespace' => 'Pulsa', 'prefix' => 'pulsa'], function() use($router){
