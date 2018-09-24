@@ -5,7 +5,7 @@
 $router->get('curl-test', function(){
 
 	$url = @$_GET['url'];
-	if($url)
+	if(!$url)
 	{
 		return ['status' => 200, 'message' => 'URL Empty'];
 	}
