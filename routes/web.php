@@ -1,17 +1,13 @@
 <?php
 
+$router->post('curl-test', function (Illuminate\Http\Request $request){
 
-
-$router->get('curl-test', function(){
-
-	$url = @$_GET['url'];
+	$url = $request->url;
 	if(!$url)
 	{
 		return ['status' => 200, 'message' => 'URL Empty'];
 	}
-
-	#$url = 'http://202.83.120.60/kodami/trx/?product=S10&dest=081222766666&refID=1232&memberid=MI0002&pin=1234&password=xxxkodami&sign=OoSoviO2iR7AtfIQNGVZOi_fzJs';
-
+	
 	// create curl resource 
     $ch = curl_init(); 
 
