@@ -1,5 +1,29 @@
 <?php
 
+
+
+$router->get('curl', function(){
+
+	$url = 'http://202.83.120.60/kodami/trx/?product=S10&dest=081222766666&refID=1232&memberid=MI0002&pin=1234&password=xxxkodami&sign=OoSoviO2iR7AtfIQNGVZOi_fzJs';
+
+	// create curl resource 
+    $ch = curl_init(); 
+
+    // set url 
+    curl_setopt($ch, CURLOPT_URL, $url); 
+
+    //return the transfer as a string 
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+
+    // $output contains the output string 
+    $output = curl_exec($ch); 
+
+    // close curl resource to free up system resources 
+    curl_close($ch);
+
+    return $output;
+});
+
 // PULSA
 $router->group(['namespace' => 'Pulsa', 'prefix' => 'pulsa'], function() use($router){
 	$router->post('response', 'IndexController@response_post');
