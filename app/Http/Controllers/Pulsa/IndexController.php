@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pulsa;
 
 use App\Http\Controllers\ApiController;
 use Tymon\JWTAuth\JWTAuth;
+use Kodami\Models\Mysql\PPulsaTransaksi;
 
 class IndexController extends ApiController
 {
@@ -33,12 +34,26 @@ class IndexController extends ApiController
 
         if(isset($this->request->refid))
         {
-          // record post
-         	$data 				       = new \Kodami\Models\Mysql\PPulsaResponse();
-         	$data->reffid 	     = $this->request->refid;
-         	$data->pesan 		     = $this->request->message;
-         	$data->result_post 	 = json_encode($this->request->all());
+            // record post
+         	$data 				    = new \Kodami\Models\Mysql\PPulsaResponse();
+         	$data->reffid 	        = $this->request->refid;
+         	$data->pesan 		    = $this->request->message;
+         	$data->result_post 	    = json_encode($this->request->all());
          	$data->save(); 
+
+            $pulsa                      = PPulsaTransaksi::where('simko_reff_id', $this->request->refid)->first();
+            $pulsa->simko_messsage      = $this->request->message;
+            #find status
+            if (strpos($this->request->message, 'SUKSES') !== false)
+            {
+                $pulsa->status              = 3;
+            }
+
+            if (strpos($this->request->message, 'GAGAL') !== false)
+            {
+                $pulsa->status              = 3;
+            }
+            $pulsa->save();
         }
 
         return $this->response()->success($response);
@@ -55,12 +70,26 @@ class IndexController extends ApiController
 
         if(isset($_GET['refid']))
         {
-          // record post
+            // record post
             $data                   = new \Kodami\Models\Mysql\PPulsaResponse();
             $data->reffid           = $_GET['refid'];
             $data->pesan            = $_GET['message'];
             $data->result_post      = json_encode($_GET);
             $data->save(); 
+
+            $pulsa                      = PPulsaTransaksi::where('simko_reff_id', $this->request->refid)->first();
+            #find status
+            if (strpos($_GET['message'], 'SUKSES') !== false)
+            {
+                $pulsa->status              = 3;
+            }
+
+            if (strpos($_GET['message'], 'GAGAL') !== false)
+            {
+                $pulsa->status              = 3;
+            }
+            $pulsa->simko_messsage      = $_GET['message'];
+            $pulsa->save();
         }
 
         return $this->response()->success($response);
