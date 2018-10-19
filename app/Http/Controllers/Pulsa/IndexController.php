@@ -43,6 +43,9 @@ class IndexController extends ApiController
 
             $pulsa                      = PPulsaTransaksi::where('simko_reff_id', $this->request->refid)->first();
             $pulsa->simko_messsage      = $this->request->message;
+
+            #file_put_contents("log_simko_pulsa_transaksi.txt", $this->request->message);
+
             #find status
             if (strpos($this->request->message, '#1'))
             {
@@ -78,6 +81,9 @@ class IndexController extends ApiController
             $data->save(); 
 
             $pulsa                      = PPulsaTransaksi::where('simko_reff_id', $this->request->refid)->first();
+
+            #file_put_contents("log_simko_pulsa_transaksi.txt", $_GET['message']);
+            
             #find status
             if (strpos($this->request->message, '#1'))
             {
