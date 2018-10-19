@@ -42,21 +42,24 @@ class IndexController extends ApiController
          	$data->save(); 
 
             $pulsa                      = PPulsaTransaksi::where('simko_reff_id', $this->request->refid)->first();
-            $pulsa->simko_messsage      = $this->request->message;
-
-            #file_put_contents("log_simko_pulsa_transaksi.txt", $this->request->message);
-
-            #find status
-            if (strpos($this->request->message, '#1') !== false)
+            if($pulsa)
             {
-                $pulsa->status              = 2;
-            }
-            else
-            {
-                $pulsa->status              = 3;
                 $pulsa->simko_messsage      = $this->request->message;
+
+                #file_put_contents("log_simko_pulsa_transaksi.txt", $this->request->message);
+
+                #find status
+                if (strpos($this->request->message, '#1') !== false)
+                {
+                    $pulsa->status              = 2;
+                }
+                else
+                {
+                    $pulsa->status              = 3;
+                    $pulsa->simko_messsage      = $this->request->message;
+                }
+                $pulsa->save();
             }
-            $pulsa->save();
         }
 
         return $this->response()->success($response);
@@ -82,18 +85,21 @@ class IndexController extends ApiController
 
             $pulsa                      = PPulsaTransaksi::where('simko_reff_id', $_GET['refid'])->first();
 
-            #find status
-            if (strpos($_GET['message'], '#1') !== false)
+            if($pulsa)
             {
-                $pulsa->status              = 2;
-            }
-            else
-            {
-                $pulsa->status              = 3;
+                #find status
+                if (strpos($_GET['message'], '#1') !== false)
+                {
+                    $pulsa->status              = 2;
+                }
+                else
+                {
+                    $pulsa->status              = 3;
+                    $pulsa->simko_messsage      = $_GET['message'];
+                }
                 $pulsa->simko_messsage      = $_GET['message'];
+                $pulsa->save();
             }
-            $pulsa->simko_messsage      = $_GET['message'];
-            $pulsa->save();
         }
 
         return $this->response()->success($response);
