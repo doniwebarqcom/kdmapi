@@ -44,14 +44,14 @@ class IndexController extends ApiController
             $pulsa                      = PPulsaTransaksi::where('simko_reff_id', $this->request->refid)->first();
             $pulsa->simko_messsage      = $this->request->message;
             #find status
-            if (strpos($this->request->message, 'SUKSES') !== false)
+            if (strpos($this->request->message, '#1') !== false)
             {
-                $pulsa->status              = 3;
+                $pulsa->status              = 2;
             }
-
-            if (strpos($this->request->message, 'GAGAL') !== false)
+            else
             {
                 $pulsa->status              = 3;
+                $pulsa->simko_messsage      = $this->request->message;
             }
             $pulsa->save();
         }
@@ -79,14 +79,14 @@ class IndexController extends ApiController
 
             $pulsa                      = PPulsaTransaksi::where('simko_reff_id', $this->request->refid)->first();
             #find status
-            if (strpos($_GET['message'], 'SUKSES') !== false)
+            if (strpos($this->request->message, '#1') !== false)
             {
-                $pulsa->status              = 3;
+                $pulsa->status              = 2;
             }
-
-            if (strpos($_GET['message'], 'GAGAL') !== false)
+            else
             {
                 $pulsa->status              = 3;
+                $pulsa->simko_messsage      = $_GET['message'];
             }
             $pulsa->simko_messsage      = $_GET['message'];
             $pulsa->save();
