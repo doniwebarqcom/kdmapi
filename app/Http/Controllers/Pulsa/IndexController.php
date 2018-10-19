@@ -47,7 +47,7 @@ class IndexController extends ApiController
                 $pulsa->simko_message      = $this->request->message;
 
                 #find status
-                if (strpos($this->request->message, '#1') !== false)
+                if (strpos($this->request->message, '1#') !== false)
                 {
                     $pulsa->status              = 2;
                 }
@@ -86,7 +86,7 @@ class IndexController extends ApiController
             if($pulsa)
             {
                 #find status
-                if (strpos($_GET['message'], '#1') !== false)
+                if (strpos($_GET['message'], '1#') !== false)
                 {
                     $pulsa->status              = 2;
                 }
