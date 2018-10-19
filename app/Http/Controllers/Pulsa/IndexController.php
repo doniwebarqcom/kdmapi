@@ -40,6 +40,8 @@ class IndexController extends ApiController
          	$data->pesan 		    = $this->request->message;
          	$data->result_post 	    = json_encode($this->request->all());
          	$data->save(); 
+        
+            return $this->response()->success($response);
 
             $pulsa                      = PPulsaTransaksi::where('simko_reff_id', $this->request->refid)->first();
             if($pulsa)
@@ -93,9 +95,9 @@ class IndexController extends ApiController
                 else
                 {
                     $pulsa->status              = 3;
-                    $pulsa->simko_messsage      = $_GET['message'];
+                    $pulsa->simko_message       = $_GET['message'];
                 }
-                $pulsa->simko_messsage      = $_GET['message'];
+                $pulsa->simko_message           = $_GET['message'];
                 $pulsa->save();
             }
         }
