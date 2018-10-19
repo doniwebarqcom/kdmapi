@@ -80,9 +80,8 @@ class IndexController extends ApiController
             $data->result_post      = json_encode($_GET);
             $data->save(); 
 
-            $pulsa                      = PPulsaTransaksi::where('simko_reff_id', $this->request->refid)->first();
-            #file_put_contents("log_simko_pulsa_transaksi.txt", $_GET['message']);
-            
+            $pulsa                      = PPulsaTransaksi::where('simko_reff_id', $_GET['refid'])->first();
+
             #find status
             if (strpos($_GET['message'], '#1') !== false)
             {
