@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set("Asia/Bangkok");
+
 $router->post('curl-test', function (Illuminate\Http\Request $request){
 
 	$url = $request->url;
