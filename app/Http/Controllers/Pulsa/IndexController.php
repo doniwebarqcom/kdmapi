@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pulsa;
 use App\Http\Controllers\ApiController;
 use Tymon\JWTAuth\JWTAuth;
 use Kodami\Models\Mysql\PPulsaTransaksi;
+use Kodami\Models\Mysql\UserDropshiper;
 
 class IndexController extends ApiController
 {
@@ -55,6 +56,12 @@ class IndexController extends ApiController
                 else
                 {
                     $pulsa->status              = 3;
+
+                    $ceksaldo = UserDropshiper::where('user_id')->first();
+                    $ceksaldo->saldo_terpakai           = $ceksaldo->saldo_terpakai - $pulsa->harga_jual;
+                    $ceksaldo->saldo                    = $ceksaldo->saldo + $pulsa->harga_jual;
+                    $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_jual;
+                    $ceksaldo->save();
                 }
                 $pulsa->save();
             }
@@ -96,6 +103,12 @@ class IndexController extends ApiController
                 else
                 {
                     $pulsa->status              = 3;
+
+                    $ceksaldo = UserDropshiper::where('user_id')->first();
+                    $ceksaldo->saldo_terpakai           = $ceksaldo->saldo_terpakai - $pulsa->harga_jual;
+                    $ceksaldo->saldo                    = $ceksaldo->saldo + $pulsa->harga_jual;
+                    $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_jual;
+                    $ceksaldo->save();
                 }
                 $pulsa->save();
             }
