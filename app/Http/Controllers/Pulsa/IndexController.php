@@ -57,7 +57,7 @@ class IndexController extends ApiController
                 {
                     $pulsa->status              = 3;
 
-                    $ceksaldo = UserDropshiper::where('user_id')->first();
+                    $ceksaldo = UserDropshiper::where('user_id', $pulsa->user_id)->first();
                     $ceksaldo->saldo_terpakai           = $ceksaldo->saldo_terpakai - $pulsa->harga_jual;
                     $ceksaldo->saldo                    = $ceksaldo->saldo + $pulsa->harga_jual;
                     $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_jual;
@@ -104,7 +104,7 @@ class IndexController extends ApiController
                 {
                     $pulsa->status              = 3;
 
-                    $ceksaldo = UserDropshiper::where('user_id')->first();
+                    $ceksaldo = UserDropshiper::where('user_id', $pulsa->user_id)->first();
                     $ceksaldo->saldo_terpakai           = $ceksaldo->saldo_terpakai - $pulsa->harga_jual;
                     $ceksaldo->saldo                    = $ceksaldo->saldo + $pulsa->harga_jual;
                     $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_jual;
