@@ -34,7 +34,7 @@ $router->group(['namespace' => 'Pulsa', 'prefix' => 'pulsa'], function() use($ro
 	$router->post('response', 'IndexController@response_post');
 	$router->get('response', 'IndexController@response_get');
 });
-$router->get('moota/response', 'MootaController@index');
+$router->post('moota/response', 'MootaController@response_post');
 $router->get('/', ['uses' => 'ExampleController@index']);
 $router->get('rajaongkir', 'ExampleController@rajaongkir');
 $router->get('rajaongkir/province', 'ExampleController@rajaongkirProvince');
