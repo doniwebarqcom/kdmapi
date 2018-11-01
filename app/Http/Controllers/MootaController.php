@@ -32,14 +32,10 @@ class MootaController extends ApiController
         $response['code'] = '200';
         $mutasi      = $this->request;
         
-
         $notifications = json_decode( file_get_contents("php://input") );
-        if(!is_array($notifications)) {
-            $notifications = json_decode( $notifications );
-        }
-
+       
         return $notifications;
-        
+
         if(isset($mutasi->id))
         {
             $temp = \Kodami\Models\Mysql\Mutation::where('mutation_id', $mutasi->id)->first();
