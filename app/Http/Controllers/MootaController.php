@@ -75,6 +75,11 @@ class MootaController extends ApiController
               }
             }         
         }
+        else
+        {
+            $response['status'] = 'error';
+            $response['code'] = '300';
+        }
 
         $response['data_from_moota'] = $mutasi;
 
