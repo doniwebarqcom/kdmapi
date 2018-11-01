@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Pulsa;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\ApiController;
 use Tymon\JWTAuth\JWTAuth;
