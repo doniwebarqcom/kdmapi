@@ -31,10 +31,6 @@ class MootaController extends ApiController
         $response['status'] = 'success';
         $response['code'] = '200';
         $mutasi      = $this->request;
-        
-        $notifications = json_decode( file_get_contents("php://input") );
-       
-        return $notifications;
 
         if(isset($mutasi->id))
         {
