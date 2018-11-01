@@ -44,7 +44,6 @@ class MootaController extends ApiController
                 $temp->description      = $mutasi->description;
                 $temp->amount           = $mutasi->amount;
                 $temp->type             = $mutasi->type == 'DB' ? 2 : 1;
-                $temp->note             = $mutasi->note;
                 $temp->account_number   = $mutasi->account_number;
                 $temp->mutation_id      = $mutasi->id;
                 $temp->save();
