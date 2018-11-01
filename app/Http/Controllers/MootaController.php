@@ -39,7 +39,7 @@ class MootaController extends ApiController
             if(!$temp)
             {
                 $temp                   = new \Kodami\Models\Mysql\Mutation();
-                $temp->rekening_bank_id = $bank->id;
+                //$temp->rekening_bank_id = $bank->id;
                 $temp->date_transfer    = $mutasi->date;
                 $temp->description      = $mutasi->description;
                 $temp->amount           = $mutasi->amount;
@@ -47,13 +47,7 @@ class MootaController extends ApiController
                 $temp->note             = $mutasi->note;
                 $temp->account_number   = $mutasi->account_number;
                 $temp->mutation_id      = $mutasi->id;
-                $temp->created_at_mutation=$mutasi->created_at;
                 $temp->save();
-
-                echo " DATE TRANSFER : ". strtoupper($bank->atas_nama) ." \n";
-                echo " DESCRIPTION : ". strtoupper($mutasi->description) ." \n";
-                echo " AMOUNT : ". strtoupper($mutasi->amount) ." \n";
-                echo " TYPE : ". strtoupper($mutasi->type) ." \n\n";
 
                 $invoice = PInvoice::where('status',2)->where('jenis_pembayaran', 1)->whereNotNull('unique')->get();
                 foreach($invoice as $item)
@@ -66,9 +60,6 @@ class MootaController extends ApiController
                     $data->save();
 
                     PPulsaTransaksi::where('invoice_id', $item->id)->update(['status_pembayaran' => 2]);
-                    echo " ==========================================================\n";
-                    echo " NO INVOICE : ". strtoupper($item->no_invoice) ." \n";
-                    echo " ==========================================================\n\n";
 
                     // UPDATE KUOTA
                     $kuota                = UserDropshiper::where('user_id', $item->user_id)->first();
