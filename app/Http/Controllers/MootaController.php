@@ -31,7 +31,8 @@ class MootaController extends ApiController
         $response['status'] = 'success';
         $response['code'] = '200';
         $mutasi      = $this->request;
-
+        
+        /*
         if(isset($mutasi->mutation_id))
         {
             $temp = \Kodami\Models\Mysql\Mutation::where('mutation_id', $mutasi->mutation_id)->first();
@@ -92,7 +93,7 @@ class MootaController extends ApiController
             $response['status'] = 'error';
             $response['code'] = '300';
         }
-
+        */
         $response['data_from_moota'] = $mutasi;
 
         return $this->response()->success($response);        
