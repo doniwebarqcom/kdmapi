@@ -41,7 +41,7 @@ class IndexController extends ApiController
          	$data->pesan 		    = $this->request->message;
          	$data->result_post 	    = json_encode($this->request->all());
          	$data->save(); 
-        
+                    
             $pulsa                      = PPulsaTransaksi::where('simko_reff_id', $this->request->refid)->first();
             if($pulsa)
             {
