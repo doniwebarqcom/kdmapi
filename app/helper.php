@@ -1,4 +1,37 @@
 <?php 
+
+/**
+ * [respon_simko_pulsa description]
+ * @param  [type] $code [description]
+ * @return [type]       [description]
+ */
+function respon_simko_pulsa($code)
+{
+    $message = [
+                0 => 'Trx akan di proses',
+                1 => 'Status Sukses',
+                2 => 'Status timeout/ biasanya karena parsing blm aktif/ provider offline',
+                3 => 'Transaksi di batalkan',
+                4 => 'Request batal dari user gagal',
+                5 => 'Terblokir salah Pin',
+                6 => 'Transaksi sudah sukses di batalkan oleh CS',
+                7 => 'Format pesan salah',
+                8 => 'Gagal tanpa definisi ( umum)',
+                9 => 'Gagal karena produk di set gangguan',
+                10 => 'Gagal karena produk tdk terdaftar atau tdk aktif',
+                11 => 'Gagal karena saldo tdk cukup',
+                12 => 'Gagal karena pesan masuk expired / terlambat',
+                13 => 'Gagal karena produk di set kosong',
+                14 => 'Trx dobel dalam waktu sama ( di tolak)',
+                15 => 'Trx dalam proses ( pending)',
+                16 => 'Tujuan diluar CLuster/ wilayah',
+                17 => 'Gagal nomer tujuan salah'
+            ];
+
+    return @$message[$code];
+}
+
+
 if (!function_exists('config_path')) {
     function config_path($path = '')
     {
