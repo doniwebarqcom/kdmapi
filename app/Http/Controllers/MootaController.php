@@ -32,10 +32,9 @@ class MootaController extends ApiController
         $response['code'] = '200';
         $mutasi      = $this->request;
         
-        /*
-        if(isset($mutasi->mutation_id))
+        if(isset($mutasi->id))
         {
-            $temp = \Kodami\Models\Mysql\Mutation::where('mutation_id', $mutasi->mutation_id)->first();
+            $temp = \Kodami\Models\Mysql\Mutation::where('mutation_id', $mutasi->id)->first();
 
             if(!$temp)
             {
@@ -47,7 +46,7 @@ class MootaController extends ApiController
                 $temp->type             = $mutasi->type == 'DB' ? 2 : 1;
                 $temp->note             = $mutasi->note;
                 $temp->account_number   = $mutasi->account_number;
-                $temp->mutation_id      = $mutasi->mutation_id;
+                $temp->mutation_id      = $mutasi->id;
                 $temp->created_at_mutation=$mutasi->created_at;
                 $temp->save();
 
@@ -93,7 +92,7 @@ class MootaController extends ApiController
             $response['status'] = 'error';
             $response['code'] = '300';
         }
-        */
+
         $response['data_from_moota'] = $mutasi;
 
         return $this->response()->success($response);        
