@@ -10,7 +10,7 @@ use Kodami\Models\Mysql\Mutation;
 use Kodami\Models\Mysql\PInvoice;
 use Kodami\Models\Mysql\UserDropshiperHistoryKuota;
 
-class IndexController extends ApiController
+class MootaController extends ApiController
 {
 	/**
 	 * Index Response
