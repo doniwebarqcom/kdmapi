@@ -70,7 +70,7 @@ class MootaController extends ApiController
                     $history                    = new UserDropshiperHistoryKuota();
                     $history->user_id           = $item->user_id;
                     $history->user_proses_id    = 0;
-                    $history->nominal           = $mutasi->amount;
+                    $history->nominal           = $mutasi->amount - $item->unique;
                     $history->type              = 2; // topup by transfer invoice
                     $history->save();
                   }
