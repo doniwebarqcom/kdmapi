@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiController;
 use Tymon\JWTAuth\JWTAuth;
 use Kodami\Models\Mysql\PPulsaTransaksi;
 use Kodami\Models\Mysql\UserDropshiper;
+use Kodami\Models\Mysql\UserKuotaSementara;
 
 class IndexController extends ApiController
 {
@@ -48,21 +49,44 @@ class IndexController extends ApiController
                 $str                        = explode('#', $this->request->message);
                 $pulsa->simko_message       = respon_simko_pulsa(@$str[0]);
 
+                $kuota_sementara   = UserKuotaSementara::where('id', $pulsa->user_kuota_sementara_id)->first();
+
                 #find status
                 if (@$str[0] == 1)
                 {
                     $pulsa->status              = 2;
+
+                    if(!empty($pulsa->user_kuota_sementara_id))
+                    {
+                        if($kuota_sementara)
+                        {
+                            $kuota_sementara->transaksi_sukses = (Int)$kuota_sementara->transaksi_sukses + 1;
+                        }
+                    }
                 }
                 else
                 {
                     $pulsa->status              = 3;
 
-                    $ceksaldo = UserDropshiper::where('user_id', $pulsa->user_id)->first();
-                    $ceksaldo->saldo_terpakai           = $ceksaldo->saldo_terpakai - $pulsa->harga_beli;
-                    $ceksaldo->saldo                    = $ceksaldo->saldo + $pulsa->harga_beli;
-                    $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_beli;
-                    $ceksaldo->save();
+                    if(!empty($pulsa->user_kuota_sementara_id))
+                    {
+                        if($kuota_sementara)
+                        {
+                            $kuota_sementara->transaksi_gagal      = (Int)$kuota_sementara->transaksi_gagal + 1;
+                            $kuota_sementara->saldo                = (Int)$kuota_sementara->saldo + $pulsa->harga_beli;
+                        }
+                    }
+                    else
+                    {
+                        $ceksaldo = UserDropshiper::where('user_id', $pulsa->user_id)->first();
+                        $ceksaldo->saldo_terpakai           = $ceksaldo->saldo_terpakai - $pulsa->harga_beli;
+                        $ceksaldo->saldo                    = $ceksaldo->saldo + $pulsa->harga_beli;
+                        $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_beli;
+                        $ceksaldo->save();
+                    }
                 }
+                
+                $kuota_sementara->save();
                 $pulsa->save();
             }
         }
@@ -92,7 +116,6 @@ class IndexController extends ApiController
 
             if($pulsa)
             {
-
                 $str = explode('#', $_GET['message']);
                 
                 if(isset($str[0]))
@@ -104,20 +127,40 @@ class IndexController extends ApiController
                     $pulsa->simko_message       = $_GET['message'];
                 }
 
+                $kuota_sementara   = UserKuotaSementara::where('id', $pulsa->user_kuota_sementara_id)->first();
+
                 #find status
                 if (@$str[0] == 1)
                 {
                     $pulsa->status              = 2;
+                    if(!empty($pulsa->user_kuota_sementara_id))
+                    {
+                        if($kuota_sementara)
+                        {
+                            $kuota_sementara->transaksi_sukses = (Int)$kuota_sementara->transaksi_sukses + 1;
+                        }
+                    }
                 }
                 else
                 {
                     $pulsa->status              = 3;
 
-                    $ceksaldo = UserDropshiper::where('user_id', $pulsa->user_id)->first();
-                    $ceksaldo->saldo_terpakai           = $ceksaldo->saldo_terpakai - $pulsa->harga_beli;
-                    $ceksaldo->saldo                    = $ceksaldo->saldo + $pulsa->harga_beli;
-                    $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_beli;
-                    $ceksaldo->save();
+                    if(!empty($pulsa->user_kuota_sementara_id))
+                    {
+                        if($kuota_sementara)
+                        {
+                            $kuota_sementara->transaksi_gagal      = (Int)$kuota_sementara->transaksi_gagal + 1;
+                            $kuota_sementara->saldo                = (Int)$kuota_sementara->saldo + $pulsa->harga_beli;
+                        }
+                    }
+                    else
+                    {
+                        $ceksaldo = UserDropshiper::where('user_id', $pulsa->user_id)->first();
+                        $ceksaldo->saldo_terpakai           = $ceksaldo->saldo_terpakai - $pulsa->harga_beli;
+                        $ceksaldo->saldo                    = $ceksaldo->saldo + $pulsa->harga_beli;
+                        $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_beli;
+                        $ceksaldo->save();
+                    }
                 }
                 $pulsa->save();
             }
