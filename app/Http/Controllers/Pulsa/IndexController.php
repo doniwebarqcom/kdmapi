@@ -86,7 +86,10 @@ class IndexController extends ApiController
                     }
                 }
                 
-                $kuota_sementara->save();
+                if($kuota_sementara)
+                {
+                    $kuota_sementara->save();
+                }
                 $pulsa->save();
             }
         }
@@ -161,6 +164,11 @@ class IndexController extends ApiController
                         $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_beli;
                         $ceksaldo->save();
                     }
+                }
+                
+                if($kuota_sementara)
+                {
+                    $kuota_sementara->save();
                 }
                 $pulsa->save();
             }
