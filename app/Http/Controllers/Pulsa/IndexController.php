@@ -49,7 +49,7 @@ class IndexController extends ApiController
                 $str                        = explode('#', $this->request->message);
                 $pulsa->simko_message       = respon_simko_pulsa(@$str[0]);
 
-                $kuota_sementara   = UserKuotaSementara::where('id', $pulsa->user_kuota_sementara_id)->first();
+                $kuota_sementara   = ''; //UserKuotaSementara::where('id', $pulsa->user_kuota_sementara_id)->first();
 
                 #find status
                 if (@$str[0] == 1)
@@ -130,7 +130,7 @@ class IndexController extends ApiController
                     $pulsa->simko_message       = $_GET['message'];
                 }
 
-                $kuota_sementara   = UserKuotaSementara::where('id', $pulsa->user_kuota_sementara_id)->first();
+                $kuota_sementara   = ''; //UserKuotaSementara::where('id', $pulsa->user_kuota_sementara_id)->first();
 
                 #find status
                 if (@$str[0] == 1)
@@ -165,7 +165,7 @@ class IndexController extends ApiController
                         $ceksaldo->save();
                     }
                 }
-                
+
                 if($kuota_sementara)
                 {
                     $kuota_sementara->save();
