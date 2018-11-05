@@ -1,6 +1,35 @@
 <?php 
 
 /**
+ * [create_invoice description]
+ * @return [type] [description]
+ */
+function create_invoice($user_id, $prefix='INV')
+{
+  $no_invoice = (\Kodami\Models\Mysql\PInvoice::count()+1).$user_id.'/'. $prefix .'/'. date('d').date('m').date('y');
+
+  $transaksi = \Kodami\Models\Mysql\PPulsaTransaksi::whereNull('invoice_id')->whereNull('status_pembayaran')->where('user_id', $user_id)->where('status', 2)->get();
+
+  if(count($transaksi) == 0) return; 
+
+  $invoice = new \Kodami\Models\Mysql\PInvoice();
+  $invoice->no_invoice    = $no_invoice;
+  $invoice->user_id       = $user_id;
+  $invoice->nominal       = \Kodami\Models\Mysql\PPulsaTransaksi::where('status', 2)->whereNull('status_pembayaran')->where('user_id', $user_id)->sum('harga_beli');
+  $invoice->status        = 1;
+  $invoice->type_pembuatan= 3; // Request Dropshiper
+  $invoice->save();
+  
+  foreach($transaksi as $item)
+  {
+      $data = \Kodami\Models\Mysql\PPulsaTransaksi::where('id', $item->id)->first();
+      $data->invoice_id = $invoice->id;
+      $data->status_pembayaran = 1;
+      $data->save();
+  }
+}
+
+/**
  * [respon_simko_pulsa description]
  * @param  [type] $code [description]
  * @return [type]       [description]
