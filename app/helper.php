@@ -1,6 +1,24 @@
 <?php 
 
 /**
+ * [parsingMessagePln description]
+ * @return [type] [description]
+ */
+function parsingMessagePln($str)
+{
+  $str = explode("SUKSES.", $str);
+  $str = explode('Saldo', @$str[1]);
+  $str = explode('SN/Ref:', $str[0]);
+  $str = explode('/', @$str[1]); 
+
+  $nama   = @$str[1];
+  $volt   = @$str[2].'/'.@$str[3];
+  $token  = @$str[0];
+
+  return ['nama'=>$nama,'token'=>$token,'volt'=>$volt, 'jumlah_kwh'=>@$str[4]];
+}
+
+/**
  * [create_invoice description]
  * @return [type] [description]
  */
@@ -9,7 +27,7 @@ function create_invoice($user_id, $prefix='INV')
   $no_invoice = (\Kodami\Models\Mysql\PInvoice::count()+1).$user_id.'/'. $prefix .'/'. date('d').date('m').date('y');
 
   $transaksi = \Kodami\Models\Mysql\PPulsaTransaksi::whereNull('invoice_id')->whereNull('status_pembayaran')->where('user_id', $user_id)->where('status', 2)->get();
-
+ 
   if(count($transaksi) == 0) return; 
 
   $invoice = new \Kodami\Models\Mysql\PInvoice();
@@ -17,7 +35,7 @@ function create_invoice($user_id, $prefix='INV')
   $invoice->user_id       = $user_id;
   $invoice->nominal       = \Kodami\Models\Mysql\PPulsaTransaksi::where('status', 2)->whereNull('status_pembayaran')->where('user_id', $user_id)->sum('harga_beli');
   $invoice->status        = 1;
-  $invoice->type_pembuatan= 3; // Request Dropshiper
+  $invoice->type_pembuatan= 4; // Otomatis Ter-Create dari system
   $invoice->save();
   
   foreach($transaksi as $item)

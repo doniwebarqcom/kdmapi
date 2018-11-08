@@ -7,6 +7,7 @@ use Tymon\JWTAuth\JWTAuth;
 use Kodami\Models\Mysql\PPulsaTransaksi;
 use Kodami\Models\Mysql\UserDropshiper;
 use Kodami\Models\Mysql\UserKuotaSementara;
+use Kodami\Models\Mysql\TransaksiPlnToken;
 
 class IndexController extends ApiController
 {
@@ -55,6 +56,22 @@ class IndexController extends ApiController
                 if (@$str[0] == 1)
                 {
                     $pulsa->status              = 2;
+
+                    # jika token listrik
+                    if(isset($pulsa->pulsa->simko_provider_id) and $pulsa->pulsa->simko_provider_id == 6)
+                    {
+                        $msg_token = parsingMessagePln($this->request->message);
+
+                        $token              = new TransaksiPlnToken();
+                        $token->nama        = $msg_token['nama'];
+                        $token->token       = $msg_token['token'];
+                        $token->volt        = $msg_token['volt'];
+                        $token->jumlah_kwh        = $msg_token['jumlah_kwh'];
+                        $token->original_return=$this->request->message;
+                        $token->save();
+                        # set relasi token pln
+                        $pulsa->transaksi_pln_token_id  = $token->id;
+                    }
 
                     if(!empty($pulsa->user_kuota_sementara_id))
                     {
