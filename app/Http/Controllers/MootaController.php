@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 <?php
 
 namespace App\Http\Controllers;
@@ -90,4 +88,3 @@ class MootaController extends ApiController
         return $this->response()->success($response);        
     }
 }
->>>>>>> 152b626299d3bc2f05feb471fa5a5721c98a74a7
