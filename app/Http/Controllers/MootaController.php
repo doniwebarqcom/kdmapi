@@ -89,4 +89,8 @@ class MootaController extends Controller
 
         return $response;        
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 2a8e995d1411c052025f17408d28e93c35cfa221

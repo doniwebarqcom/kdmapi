@@ -30,7 +30,6 @@ class IndexController extends ApiController
      * @param  JWTAuth $JWTAuth [description]
      * @return [type]           [description]
      */
-    /*
     public function response_post()
     {
         $response['status'] = 'success';
@@ -124,7 +123,7 @@ class IndexController extends ApiController
 
         return $this->response()->success($response);
     }
-    */
+    
 
     /**
      * [response_get description]
@@ -134,7 +133,7 @@ class IndexController extends ApiController
     {
         $response['status'] = 'success';
         $response['code'] = '200';
-
+        
         if(isset($_GET['refid']))
         {
             // record post
