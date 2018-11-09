@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 <?php
 
 namespace App\Http\Controllers;
@@ -10,15 +8,16 @@ use Kodami\Models\Mysql\PPulsaTransaksi;
 use Kodami\Models\Mysql\UserDropshiper;
 use Kodami\Models\Mysql\Mutation;
 use Kodami\Models\Mysql\PInvoice;
+use Kodami\Models\Mysql\RekeningBank;
 use Kodami\Models\Mysql\UserDropshiperHistoryKuota;
 
-class MootaController extends ApiController
+class MootaController extends Controller
 {
-	/**
-	 * Index Response
-	 * @param  JWTAuth $JWTAuth [description]
-	 * @return [type]           [description]
-	 */
+    /**
+     * Index Response
+     * @param  JWTAuth $JWTAuth [description]
+     * @return [type]           [description]
+     */
     public function index()
     {
         return;
@@ -32,62 +31,62 @@ class MootaController extends ApiController
     {
         $response['status'] = 'success';
         $response['code'] = '200';
-        $mutasi      = $this->request;
+        
+        $temp = json_decode( file_get_contents("php://input") );
+        
+        if(!is_array($temp)) {
+            $temp = json_decode($temp);
+        }
 
-        if(isset($mutasi->id))
+        foreach($temp as $mutasi)
         {
-            $temp = \Kodami\Models\Mysql\Mutation::where('mutation_id', $mutasi->id)->first();
-
-            if(!$temp)
+            if(isset($mutasi->id))
             {
-                $temp                   = new \Kodami\Models\Mysql\Mutation();
-                //$temp->rekening_bank_id = $bank->id;
-                $temp->date_transfer    = $mutasi->date;
-                $temp->description      = $mutasi->description;
-                $temp->amount           = $mutasi->amount;
-                $temp->type             = $mutasi->type == 'DB' ? 2 : 1;
-                $temp->account_number   = $mutasi->account_number;
-                $temp->mutation_id      = $mutasi->id;
-                $temp->save();
+                $temp = Mutation::where('mutation_id', $mutasi->id)->first();
+                $bank = RekeningBank::where('moota_bank_id', $mutasi->bank_id)->first();
 
-                $invoice = PInvoice::where('status',2)->where('jenis_pembayaran', 1)->whereNotNull('unique')->get();
-                foreach($invoice as $item)
+                if(!$temp and $bank)
                 {
-                  if($item->nominal == $mutasi->amount)
-                  {
-                    $data                 = PInvoice::where('id',$item->id)->first();
-                    $data->mutation_id    = $temp->id;
-                    $data->status = 3;
-                    $data->save();
+                    $temp                   = new Mutation();
+                    $temp->date_transfer    = $mutasi->date;
+                    $temp->description      = $mutasi->description;
+                    $temp->amount           = $mutasi->amount;
+                    $temp->type             = $mutasi->type == 'DB' ? 2 : 1;
+                    $temp->account_number   = $mutasi->account_number;
+                    $temp->mutation_id      = $mutasi->id;
+                    $temp->save();
 
-                    PPulsaTransaksi::where('invoice_id', $item->id)->update(['status_pembayaran' => 2]);
+                    $invoice = PInvoice::where('status',2)->where('jenis_pembayaran', 1)->whereNotNull('unique')->get();
+                    foreach($invoice as $item)
+                    {
+                      if($item->nominal == $mutasi->amount)
+                      {
+                        $data                 = PInvoice::where('id',$item->id)->first();
+                        $data->mutation_id    = $temp->id;
+                        $data->status = 3;
+                        $data->save();
 
-                    // UPDATE KUOTA
-                    $kuota                = UserDropshiper::where('user_id', $item->user_id)->first();
-                    $kuota->saldo         = $kuota->saldo + ($mutasi->amount - $item->unique);
-                    $kuota->saldo_terpakai= $kuota->saldo_terpakai - ($mutasi->amount - $item->unique);
-                    $kuota->save();
+                        PPulsaTransaksi::where('invoice_id', $item->id)->update(['status_pembayaran' => 2]);
 
-                    // HISTORY KUOTA
-                    $history                    = new UserDropshiperHistoryKuota();
-                    $history->user_id           = $item->user_id;
-                    $history->user_proses_id    = 0;
-                    $history->nominal           = $mutasi->amount - $item->unique;
-                    $history->type              = 2; // topup by transfer invoice
-                    $history->save();
-                  }
-                }         
+                        // UPDATE KUOTA
+                        $kuota                = UserDropshiper::where('user_id', $item->user_id)->first();
+                        $kuota->saldo         = $kuota->saldo + ($mutasi->amount - $item->unique);
+                        $kuota->saldo_terpakai= $kuota->saldo_terpakai - ($mutasi->amount - $item->unique);
+                        $kuota->save();
+
+                        // HISTORY KUOTA
+                        $history                    = new UserDropshiperHistoryKuota();
+                        $history->user_id           = $item->user_id;
+                        $history->user_proses_id    = 0;
+                        $history->nominal           = $mutasi->amount - $item->unique;
+                        $history->type              = 2; // topup by transfer invoice
+                        $history->save();
+                      }
+                    }         
+                }
             }
         }
-        else
-        {
-            $response['status'] = 'error';
-            $response['code'] = '300';
-        }
 
-        $response['data_from_moota'] = $mutasi;
-
-        return $this->response()->success($response);        
+        return $response;        
     }
 }
->>>>>>> 152b626299d3bc2f05feb471fa5a5721c98a74a7
