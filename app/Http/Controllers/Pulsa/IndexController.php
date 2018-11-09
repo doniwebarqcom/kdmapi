@@ -30,6 +30,7 @@ class IndexController extends ApiController
      * @param  JWTAuth $JWTAuth [description]
      * @return [type]           [description]
      */
+    /*
     public function response_post()
     {
         $response['status'] = 'success';
@@ -123,6 +124,7 @@ class IndexController extends ApiController
 
         return $this->response()->success($response);
     }
+    */
 
     /**
      * [response_get description]
@@ -163,11 +165,38 @@ class IndexController extends ApiController
                 if (@$str[0] == 1)
                 {
                     $pulsa->status              = 2;
+
+                   # jika token listrik
+                    if(isset($pulsa->pulsa->simko_provider_id) and $pulsa->pulsa->simko_provider_id == 6)
+                    {
+                        $msg_token = parsingMessagePln($_GET['message']);
+
+                        $token              = new TransaksiPlnToken();
+                        $token->nama        = $msg_token['nama'];
+                        $token->token       = $msg_token['token'];
+                        $token->volt        = $msg_token['volt'];
+                        $token->jumlah_kwh          = $msg_token['jumlah_kwh'];
+                        $token->original_return     = $_GET['message'];
+                        $token->save();
+                        # set relasi token pln
+                        $pulsa->transaksi_pln_token_id  = $token->id;
+                    }
+
                     if(!empty($pulsa->user_kuota_sementara_id))
                     {
                         if($kuota_sementara)
                         {
                             $kuota_sementara->transaksi_sukses = (Int)$kuota_sementara->transaksi_sukses + 1;
+                        }
+                    }
+
+                    # create invoice jika sukses
+                    $cekkuotasementara = \Kodami\Models\Mysql\UserDropshiper::where('user_id', $pulsa->user_id)->first();
+                    if($cekkuotasementara)
+                    {
+                        if($cekkuotasementara->kuota_sementara_is_avaliable == 1)
+                        {
+                            create_invoice($pulsa->user_id);
                         }
                     }
                 }
