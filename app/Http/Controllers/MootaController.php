@@ -48,31 +48,17 @@ class MootaController extends ApiController
                 $temp->mutation_id      = $mutasi->id;
                 $temp->save();
 
-                $invoice = PInvoice::where('status',2)->where('jenis_pembayaran', 1)->whereNotNull('unique')->get();
+                $invoice = PInvoice::where('status',2)->where(function($table){ 
+                    $table->where('jenis_pembayaran', 1)
+                          ->orWhere('jenis_pembayaran', 3);
+                })->whereNotNull('unique')->get();
+
                 foreach($invoice as $item)
                 {
                   if($item->nominal == $mutasi->amount)
                   {
-                    $data                 = PInvoice::where('id',$item->id)->first();
-                    $data->mutation_id    = $temp->id;
-                    $data->status = 3;
-                    $data->save();
-
-                    PPulsaTransaksi::where('invoice_id', $item->id)->update(['status_pembayaran' => 2]);
-
-                    // UPDATE KUOTA
-                    $kuota                = UserDropshiper::where('user_id', $item->user_id)->first();
-                    $kuota->saldo         = $kuota->saldo + ($mutasi->amount - $item->unique);
-                    $kuota->saldo_terpakai= $kuota->saldo_terpakai - ($mutasi->amount - $item->unique);
-                    $kuota->save();
-
-                    // HISTORY KUOTA
-                    $history                    = new UserDropshiperHistoryKuota();
-                    $history->user_id           = $item->user_id;
-                    $history->user_proses_id    = 0;
-                    $history->nominal           = $mutasi->amount - $item->unique;
-                    $history->type              = 2; // topup by transfer invoice
-                    $history->save();
+                    # FUNCTION APPROVE INVOICE HERE
+                    approve_invoice($item->id, $temp->id);
                   }
                 }         
             }

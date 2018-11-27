@@ -88,6 +88,9 @@ class IndexController extends ApiController
                         if($cekkuotasementara->kuota_sementara_is_avaliable == 1)
                         {
                             create_invoice($pulsa->user_id);
+                            # update status kuota sementara
+                            $cekkuotasementara->kuota_sementara_is_avaliable = 0;
+                            $cekkuotasementara->save();
                         }
                     }
                 }
@@ -196,6 +199,9 @@ class IndexController extends ApiController
                         if($cekkuotasementara->kuota_sementara_is_avaliable == 1)
                         {
                             create_invoice($pulsa->user_id);
+                            # update status kuota sementara
+                            $cekkuotasementara->kuota_sementara_is_avaliable = 0;
+                            $cekkuotasementara->save();
                         }
                     }
                 }

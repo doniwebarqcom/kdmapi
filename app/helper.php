@@ -1,6 +1,83 @@
 <?php 
 
 /**
+ * Approve Invoice Fungsi
+ * @param  invoice id
+ * @return status array
+ */
+function approve_invoice($id, $mutation_id="")
+{
+    $data                 = \Kodami\Models\Mysql\PInvoice::where('id',$id)->first();
+    
+    if(!empty($mutation_id))
+    {
+      $data->mutation_id    = $mutation_id;      
+    }
+
+    $data->status = 3;
+    $data->save();
+
+    \Kodami\Models\Mysql\PPulsaTransaksi::where('invoice_id', $id)->update(['status_pembayaran' => 2]);
+
+    # cek invoice kuota sementara
+    $transaksi_kuota_sementara = \Kodami\Models\Mysql\PPulsaTransaksi::whereNull('invoice_id')->whereNull('status_pembayaran')->whereNotNull('user_kuota_sementara_id')->where('user_id', $data->user_id)->where('status', 2)->sum('harga_beli');        
+    if($transaksi_kuota_sementara > 0)
+    {
+      $saldo_invoice = $data->nominal - $transaksi_kuota_sementara;
+
+      $no_invoice = (\Kodami\Models\Mysql\PInvoice::count()+1).$data->user_id.'/INVSTR/'. date('d').date('m').date('y');
+      $invoice = new \Kodami\Models\Mysql\PInvoice();
+      $invoice->no_invoice    = $no_invoice;
+      $invoice->user_id       = $data->user_id;
+      $invoice->nominal       = $transaksi_kuota_sementara;
+      $invoice->status        = 1;
+      $invoice->type_pembuatan= 3; // Request Dropshiper
+      $invoice->save();            
+
+      $transaksi = \Kodami\Models\Mysql\PPulsaTransaksi::whereNull('invoice_id')
+                                    ->whereNull('status_pembayaran')
+                                    ->whereNotNull('user_kuota_sementara_id')
+                                    ->where('user_id', $data->user_id)
+                                    ->where('status', 2)
+                                    ->update(['invoice_id'=> $invoice->id, 'status_pembayaran'=>1]);
+      if($saldo_invoice > 0)
+      {
+          // UPDATE KUOTA
+          $kuota                = \Kodami\Models\Mysql\UserDropshiper::where('user_id', $data->user_id)->first();
+          $kuota->saldo         = $kuota->saldo + $saldo_invoice;
+          $kuota->saldo_terpakai= $kuota->saldo_terpakai - $saldo_invoice;
+          $kuota->kuota_sementara_status    = 0;
+          $kuota->kuota_sementara_is_avaliable = 0;
+          $kuota->save();
+
+          // HISTORY KUOTA
+          $history                    = new \Kodami\Models\Mysql\UserDropshiperHistoryKuota();
+          $history->user_id           = $data->user_id;
+          $history->user_proses_id    = 0;
+          $history->nominal           = $saldo_invoice;
+          $history->type              = 2; // topup by transfer invoice
+          $history->save();
+      }
+    }
+    else
+    {
+      // UPDATE KUOTA
+      $kuota                = \Kodami\Models\Mysql\UserDropshiper::where('user_id', $data->user_id)->first();
+      $kuota->saldo         = $kuota->saldo + ($data->nominal - $data->unique);
+      $kuota->saldo_terpakai= $kuota->saldo_terpakai - ($data->nominal - $data->unique);
+      $kuota->save();
+
+      // HISTORY KUOTA
+      $history                    = new \Kodami\Models\Mysql\UserDropshiperHistoryKuota();
+      $history->user_id           = $data->user_id;
+      $history->user_proses_id    = 0;
+      $history->nominal           = $data->nominal - $data->unique;
+      $history->type              = 2; // topup by transfer invoice
+      $history->save();
+    }
+}
+
+/**
  * [parsingMessagePln description]
  * @return [type] [description]
  */
