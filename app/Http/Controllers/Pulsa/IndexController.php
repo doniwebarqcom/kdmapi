@@ -53,8 +53,10 @@ class IndexController extends ApiController
                 $kuota_sementara   = UserKuotaSementara::where('id', $pulsa->user_kuota_sementara_id)->first();
 
                 #find status
-                if (@$str[0] == 1)
+                if (strpos($_GET['message'], '#1#') !== false)
                 {
+                //if (@$str[0] == 1)
+                //{
                     $pulsa->status              = 2;
 
                     # jika token listrik
@@ -164,8 +166,9 @@ class IndexController extends ApiController
                 $kuota_sementara   = UserKuotaSementara::where('id', $pulsa->user_kuota_sementara_id)->first();
 
                 #find status
-                if (@$str[0] == 1)
-                {
+                if (strpos($_GET['message'], '#1#') !== false) {
+                #if (@$str[0] == 1)
+                #{
                     $pulsa->status              = 2;
 
                    # jika token listrik
