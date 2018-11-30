@@ -53,7 +53,7 @@ class IndexController extends ApiController
                 $kuota_sementara   = UserKuotaSementara::where('id', $pulsa->user_kuota_sementara_id)->first();
 
                 #find status
-                if (strpos($_GET['message'], '#1#') !== false)
+                if (strpos($this->request->message, '#1#') !== false)
                 {
                 //if (@$str[0] == 1)
                 //{
