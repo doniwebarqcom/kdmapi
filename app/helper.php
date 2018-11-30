@@ -131,28 +131,82 @@ function create_invoice($user_id, $prefix='INV')
  */
 function respon_simko_pulsa($code)
 {
-    $message = [
-                0 => 'Trx akan di proses',
-                1 => 'Status Sukses',
-                2 => 'Status timeout/ biasanya karena parsing blm aktif/ provider offline',
-                3 => 'Transaksi di batalkan',
-                4 => 'Request batal dari user gagal',
-                5 => 'Terblokir salah Pin',
-                6 => 'Transaksi sudah sukses di batalkan oleh CS',
-                7 => 'Format pesan salah',
-                8 => 'Gagal tanpa definisi ( umum)',
-                9 => 'Gagal karena produk di set gangguan',
-                10 => 'Gagal karena produk tdk terdaftar atau tdk aktif',
-                11 => 'Gagal karena saldo tdk cukup',
-                12 => 'Gagal karena pesan masuk expired / terlambat',
-                13 => 'Gagal karena produk di set kosong',
-                14 => 'Trx dobel dalam waktu sama ( di tolak)',
-                15 => 'Trx dalam proses ( pending)',
-                16 => 'Tujuan diluar CLuster/ wilayah',
-                17 => 'Gagal nomer tujuan salah'
-            ];
+  $message = $code;
+  
+  if (strpos($code, '#0#') !== false)
+  {
+      $message = "Trx akan di proses";
+  }
+  if (strpos($code, '#1#') !== false)
+  {
+      $message = "Status Sukses";
+  }
+  if (strpos($code, '#2#') !== false)
+  {
+      $message = "Status timeout/ biasanya karena parsing blm aktif/ provider offline";
+  }
+  if (strpos($code, '#3#') !== false)
+  {
+      $message = "Transaksi di batalkan";
+  }
+  if (strpos($code, '#4#') !== false)
+  {
+      $message = "Request batal dari user gagal";
+  }
+  if (strpos($code, '#5#') !== false)
+  {
+      $message = "Terblokir salah Pin";
+  }
+  if (strpos($code, '#6#') !== false)
+  {
+      $message = "Transaksi sudah sukses di batalkan oleh CS";
+  }
+  if (strpos($code, '#7#') !== false)
+  {
+      $message = "Format pesan salah";
+  }
+  if (strpos($code, '#8#') !== false)
+  {
+      $message = "Gagal tanpa definisi ( umum )";
+  }
+  if (strpos($code, '#9#') !== false)
+  {
+      $message = "Gagal karena produk di set gangguan";
+  }
+  if (strpos($code, '#10#') !== false)
+  {
+      $message = "Gagal karena produk tdk terdaftar atau tdk aktif";
+  }
+  if (strpos($code, '#11#') !== false)
+  {
+      $message = "Gagal karena saldo tdk cukup";
+  }
+  if (strpos($code, '#12#') !== false)
+  {
+      $message = "Gagal karena pesan masuk expired / terlambat";
+  }
+  if (strpos($code, '#13#') !== false)
+  {
+      $message = "Gagal karena produk di set kosong";
+  }
+  if (strpos($code, '#14#') !== false)
+  {
+      $message = "Trx dobel dalam waktu sama ( di tolak )";
+  }
+  if (strpos($code, '#15#') !== false)
+  {
+      $message = "Trx dalam proses ( pending )";
+  }
+  if (strpos($code, '#16#') !== false)
+  {
+      $message = "Tujuan diluar CLuster/ wilayah";
+  }
+  if (strpos($code, '#17#') !== false)
+  {
+      $message = "Gagal nomer tujuan salah";
+  }
 
-    return @$message[$code];
+  return $message;
 }
 
 

@@ -48,7 +48,7 @@ class IndexController extends ApiController
             if($pulsa)
             {
                 $str                        = explode('#', $this->request->message);
-                $pulsa->simko_message       = respon_simko_pulsa(@$str[0]);
+                $pulsa->simko_message       = respon_simko_pulsa($this->request->message);
 
                 $kuota_sementara   = UserKuotaSementara::where('id', $pulsa->user_kuota_sementara_id)->first();
 
@@ -156,7 +156,7 @@ class IndexController extends ApiController
                 
                 if(isset($str[0]))
                 {
-                    $pulsa->simko_message       = respon_simko_pulsa(@$str[0]);
+                    $pulsa->simko_message       = respon_simko_pulsa($_GET['message']);
                 }
                 else
                 {
@@ -166,7 +166,8 @@ class IndexController extends ApiController
                 $kuota_sementara   = UserKuotaSementara::where('id', $pulsa->user_kuota_sementara_id)->first();
 
                 #find status
-                if (strpos($_GET['message'], '#1#') !== false) {
+                if (strpos($_GET['message'], '#1#') !== false) 
+                {
                 #if (@$str[0] == 1)
                 #{
                     $pulsa->status              = 2;
