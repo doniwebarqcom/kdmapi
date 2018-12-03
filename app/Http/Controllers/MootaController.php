@@ -29,6 +29,7 @@ class MootaController extends Controller
      */
     public function response_post()
     {
+        return "";
         $response['status'] = 'success';
         $response['code'] = '200';
         
@@ -57,7 +58,8 @@ class MootaController extends Controller
                     # FUNCTION APPROVE INVOICE HERE
                     approve_invoice($item->id, $temp->id);
                   }
-                }         
+                } 
+
                 if(!$temp and $bank)
                 {
                     $temp                   = new Mutation();
