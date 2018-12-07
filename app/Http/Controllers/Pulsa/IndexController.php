@@ -8,6 +8,9 @@ use Kodami\Models\Mysql\PPulsaTransaksi;
 use Kodami\Models\Mysql\UserDropshiper;
 use Kodami\Models\Mysql\UserKuotaSementara;
 use Kodami\Models\Mysql\TransaksiPlnToken;
+use Kodami\Models\Mysql\Deposit;
+use Kodami\Models\Mysql\UserAnggota;
+use Kodami\Models\Mysql\Withdrawal;
 
 class IndexController extends ApiController
 {
@@ -55,8 +58,6 @@ class IndexController extends ApiController
                 #find status
                 if (strpos($this->request->message, '#1#') !== false)
                 {
-                //if (@$str[0] == 1)
-                //{
                     $pulsa->status              = 2;
 
                     # jika token listrik
@@ -100,21 +101,73 @@ class IndexController extends ApiController
                 {
                     $pulsa->status              = 3;
 
-                    if(!empty($pulsa->user_kuota_sementara_id))
+                     # jika akses sebagai dropshiper
+                    if($pulsa->user->access_id == 7)
                     {
-                        if($kuota_sementara)
+                        if(!empty($pulsa->user_kuota_sementara_id))
                         {
-                            $kuota_sementara->transaksi_gagal      = (Int)$kuota_sementara->transaksi_gagal + 1;
-                            $kuota_sementara->saldo                = (Int)$kuota_sementara->saldo + $pulsa->harga_beli;
+                            if($kuota_sementara)
+                            {
+                                $kuota_sementara->transaksi_gagal      = (Int)$kuota_sementara->transaksi_gagal + 1;
+                                $kuota_sementara->saldo                = (Int)$kuota_sementara->saldo + $pulsa->harga_beli;
+                            }
+                        }
+                        else
+                        {
+                            $ceksaldo = UserDropshiper::where('user_id', $pulsa->user_id)->first();
+                            $ceksaldo->saldo_terpakai           = $ceksaldo->saldo_terpakai - $pulsa->harga_beli;
+                            $ceksaldo->saldo                    = $ceksaldo->saldo + $pulsa->harga_beli;
+                            $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_beli;
+                            $ceksaldo->save();
                         }
                     }
-                    else
+
+                    # jika sebagai anggota
+                    if($pulsa->user->access_id == 2)
                     {
-                        $ceksaldo = UserDropshiper::where('user_id', $pulsa->user_id)->first();
-                        $ceksaldo->saldo_terpakai           = $ceksaldo->saldo_terpakai - $pulsa->harga_beli;
-                        $ceksaldo->saldo                    = $ceksaldo->saldo + $pulsa->harga_beli;
-                        $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_beli;
-                        $ceksaldo->save();
+                        # jika metode pembayaran transfer
+                        if($pulsa->payment_method == 1)
+                        {
+                            $simpanan_sukarela              = new Deposit();
+                            $simpanan_sukarela->nominal     = $pulsa->harga_beli_add_random_code;
+                            $simpanan_sukarela->status      = 3;
+                            $simpanan_sukarela->type        = 4;
+                            $simpanan_sukarela->user_id      = $pulsa->user_id;
+                            $simpanan_sukarela->save();
+
+                            $anggota = UserAnggota::where('user_id', $pulsa->user_id)->first();
+                            if($anggota)
+                            {
+                                $anggota->simpanan_sukarela = $anggota->simpanan_sukarela + $pulsa->harga_beli_add_random_code; 
+                                $anggota->save();
+                            }
+                        }
+
+                        # jika methode pembayaran simpanan
+                        if($pulsa->payment_method == 2)
+                        {
+                            # calcalulate simpanan
+                            $user                       = UserAnggota::where('user_id', $pulsa->user_id)->first();
+                            $user->simpanan_sukarela    = $user->simpanan_sukarela + $pulsa->harga_beli; 
+                            $user->save();
+
+                            /** rubah status jadi batal  */
+                            $withdrawal = Withdrawal::where('user_id', $pulsa->user_id)->where('transaksi_id', $pulsa->id)->where('nominal', $pulsa->harga_beli)->where('status', 1)->first();
+                            if($withdrawal)
+                            {
+                                $withdrawal->status = 2;
+                                $withdrawal->save();
+                            }
+                        }
+
+                        # jika methode pembayaran kuota
+                        if($pulsa->payment_method == 4)
+                        {
+                            # calcalulate kuota
+                            $user                       = UserAnggota::where('user_id', $pulsa->user_id)->first();
+                            $user->kuota                = $user->kuota + $pulsa->harga_beli; 
+                            $user->save();
+                        }
                     }
                 }
                 
@@ -168,8 +221,6 @@ class IndexController extends ApiController
                 #find status
                 if (strpos($_GET['message'], '#1#') !== false) 
                 {
-                #if (@$str[0] == 1)
-                #{
                     $pulsa->status              = 2;
 
                    # jika token listrik
@@ -213,22 +264,74 @@ class IndexController extends ApiController
                 {
                     $pulsa->status              = 3;
 
-                    if(!empty($pulsa->user_kuota_sementara_id))
+                    # jika akses sebagai dropshiper
+                    if($pulsa->user->access_id == 7)
                     {
-                        if($kuota_sementara)
+                        if(!empty($pulsa->user_kuota_sementara_id))
                         {
-                            $kuota_sementara->transaksi_gagal      = (Int)$kuota_sementara->transaksi_gagal + 1;
-                            $kuota_sementara->saldo                = (Int)$kuota_sementara->saldo + $pulsa->harga_beli;
+                            if($kuota_sementara)
+                            {
+                                $kuota_sementara->transaksi_gagal      = (Int)$kuota_sementara->transaksi_gagal + 1;
+                                $kuota_sementara->saldo                = (Int)$kuota_sementara->saldo + $pulsa->harga_beli;
+                            }
+                        }
+                        else
+                        {
+                            $ceksaldo = UserDropshiper::where('user_id', $pulsa->user_id)->first();
+                            $ceksaldo->saldo_terpakai           = $ceksaldo->saldo_terpakai - $pulsa->harga_beli;
+                            $ceksaldo->saldo                    = $ceksaldo->saldo + $pulsa->harga_beli;
+                            $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_beli;
+                            $ceksaldo->save();
                         }
                     }
-                    else
+
+                    # jika sebagai anggota
+                    if($pulsa->user->access_id == 2)
                     {
-                        $ceksaldo = UserDropshiper::where('user_id', $pulsa->user_id)->first();
-                        $ceksaldo->saldo_terpakai           = $ceksaldo->saldo_terpakai - $pulsa->harga_beli;
-                        $ceksaldo->saldo                    = $ceksaldo->saldo + $pulsa->harga_beli;
-                        $ceksaldo->total_saldo_terpakai     = $ceksaldo->total_saldo_terpakai - $pulsa->harga_beli;
-                        $ceksaldo->save();
-                    }
+                        # jika metode pembayaran transfer
+                        if($pulsa->payment_method == 1)
+                        {
+                            $simpanan_sukarela              = new Deposit();
+                            $simpanan_sukarela->nominal     = $pulsa->harga_beli_add_random_code;
+                            $simpanan_sukarela->status      = 3;
+                            $simpanan_sukarela->type        = 4;
+                            $simpanan_sukarela->user_id      = $pulsa->user_id;
+                            $simpanan_sukarela->save();
+
+                            $anggota = UserAnggota::where('user_id', $pulsa->user_id)->first();
+                            if($anggota)
+                            {
+                                $anggota->simpanan_sukarela = $anggota->simpanan_sukarela + $pulsa->harga_beli_add_random_code; 
+                                $anggota->save();
+                            }
+                        }
+
+                        # jika methode pembayaran simpanan
+                        if($pulsa->payment_method == 2)
+                        {
+                            # calcalulate simpanan
+                            $user                       = UserAnggota::where('user_id', $pulsa->user_id)->first();
+                            $user->simpanan_sukarela    = $user->simpanan_sukarela + $pulsa->harga_beli; 
+                            $user->save();
+
+                            /** rubah status jadi batal  */
+                            $withdrawal = Withdrawal::where('user_id', $pulsa->user_id)->where('transaksi_id', $pulsa->id)->where('nominal', $pulsa->harga_beli)->where('status', 1)->first();
+                            if($withdrawal)
+                            {
+                                $withdrawal->status = 2;
+                                $withdrawal->save();
+                            }
+                        }
+
+                        # jika methode pembayaran kuota
+                        if($pulsa->payment_method == 4)
+                        {
+                            # calcalulate kuota
+                            $user                       = UserAnggota::where('user_id', $pulsa->user_id)->first();
+                            $user->kuota                = $user->kuota + $pulsa->harga_beli; 
+                            $user->save();
+                        }
+                    }   
                 }
 
                 if($kuota_sementara)
