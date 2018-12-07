@@ -29,6 +29,59 @@ $router->post('curl-test', function (Illuminate\Http\Request $request){
 });
 
 
+// APIWHA
+$router->post('apiwha', function(){
+
+    // This is your webhook. You must configure it in the number settings section. 
+    $data = json_decode($_POST["data"]); 
+
+    // When you receive a message an INBOX event is created 
+    if ($data->event=="INBOX") 
+    { 
+        if(!(strpos(strtoupper($data->text), "PROFIL")===false))
+        {
+            $param = explode($data->text,'.');
+            if(!isset($param[1]))
+            {
+                ApiWhaCurl($data->from, 'Maaf, Kode validasi anggota harus diisi. Format PROFIL.<kodevalidasi>');
+            }
+            else
+            {
+                $user = \Kodami\Models\Mysql\Users::where('kode_validasi', $param[1])->first();
+                if($user)
+                {
+                    $msg = "=================================================\n";
+                    $msg += 'No Anggota : '. $user->no_anggota ."\n";
+                    $msg += 'Nama : '. $user->name ."\n";
+                    $msg += 'Jenis Kelamin : '. $user->jenis_kelamin ."\n";
+                    $msg += 'Email : '. $user->jenis_kelamin ."\n";
+                    $msg += 'Telepon :'. $user->telepon ."\n";
+                    $msg += 'Kuota : '. $user->user_dropshiper->saldo ."\n";
+                    $msg += 'Kuota Terpakai : '. $user->user_dropshiper->saldo_terpakai ."\n";
+                    $msg = "=================================================\n";
+
+                    ApiWhaCurl($data->from ,urlencode($msg));
+                }
+                else
+                {
+                    ApiWhaCurl($data->from, 'Maaf, Kode validasi anggota harus diisi. Format PROFIL.<kodevalidasi>');
+                }
+            }
+        } 
+
+    }elseif ($data->event=="MESSAGEPROCESSED") { 
+
+      /* Here, you can do whatever you want */ 
+
+    }elseif ($data->event=="MESSAGEFAILED") { 
+
+      /* Here, you can do whatever you want */ 
+
+    } 
+
+
+});
+
 // PULSA
 $router->group(['namespace' => 'Pulsa', 'prefix' => 'pulsa'], function() use($router){
 	$router->post('response', 'IndexController@response_post');
