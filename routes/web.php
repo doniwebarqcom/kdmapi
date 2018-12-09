@@ -4,7 +4,7 @@ date_default_timezone_set("Asia/Bangkok");
 
 $router->post('curl-test', function (Illuminate\Http\Request $request){
 
-	$url = $request->url;
+	$url = @$request->url;
 	if(!$url)
 	{
 		return ['status' => 404, 'message' => 'Error', 'data' => 'URL Empty'];
@@ -28,58 +28,108 @@ $router->post('curl-test', function (Illuminate\Http\Request $request){
     return ['status' => 200, 'message' => 'success', 'data' => $output];
 });
 
-
 // APIWHA
-$router->post('apiwha', function(){
+$router->post('apiwha', function(Illuminate\Http\Request $request){
 
     // This is your webhook. You must configure it in the number settings section. 
-    $data = json_decode($_POST["data"]); 
-
+    $result = '';
+    $data = json_decode($request->data); 
+    
     // When you receive a message an INBOX event is created 
     if ($data->event=="INBOX") 
     { 
-        if(!(strpos(strtoupper($data->text), "PROFIL")===false))
+        $result = ApiWhaCurl($data->from, '"'. $data->text .'" sedang diproses...');
+
+        if(!(strpos(strtoupper($data->text), "LIST")===false))
         {
-            $param = explode($data->text,'.');
+            $msg = "LIST FUNGSI\n";
+            $msg .= "===============================\n";
+            $msg .= "\"INVOICE\" untuk mengetahui invoice yang belum lunas.\n";
+            $msg .= "\"KATALOG\" untuk mengetahui katalog produk kodami.\n";
+            $msg .= "\"PROFIL.<noanggota>\" untuk mengetahui profil anggota.\n";
+            $msg .= "\"KODAMI\" untuk mengetahui profil Koperasi Kodami.\n";
+            $msg .= "===============================\n";
+
+            $result = ApiWhaCurl($data->from, $msg);
+        }
+        elseif(!(strpos(strtoupper($data->text), "PROFIL")===false))
+        {
+            $param = explode('.', $data->text);
+            
             if(!isset($param[1]))
             {
-                ApiWhaCurl($data->from, 'Maaf, Kode validasi anggota harus diisi. Format PROFIL.<kodevalidasi>');
+                $result = ApiWhaCurl($data->from, 'Maaf, No Anggota harus diisi. Format "PROFIL.<noanggota>"');
             }
             else
             {
-                $user = \Kodami\Models\Mysql\Users::where('kode_validasi', $param[1])->first();
+                $user = \Kodami\Models\Mysql\Users::where('no_anggota', $param[1])->first();
                 if($user)
                 {
-                    $msg = "=================================================\n";
-                    $msg += 'No Anggota : '. $user->no_anggota ."\n";
-                    $msg += 'Nama : '. $user->name ."\n";
-                    $msg += 'Jenis Kelamin : '. $user->jenis_kelamin ."\n";
-                    $msg += 'Email : '. $user->jenis_kelamin ."\n";
-                    $msg += 'Telepon :'. $user->telepon ."\n";
-                    $msg += 'Kuota : '. $user->user_dropshiper->saldo ."\n";
-                    $msg += 'Kuota Terpakai : '. $user->user_dropshiper->saldo_terpakai ."\n";
-                    $msg = "=================================================\n";
-
-                    ApiWhaCurl($data->from ,urlencode($msg));
+                    $msg = "===============================\n";
+                    $msg .= 'No Anggota : '. $user->no_anggota ."\n";
+                    $msg .= 'Nama : '. $user->name ."\n";
+                    $msg .= 'Jenis Kelamin : '. $user->jenis_kelamin ."\n";
+                    $msg .= 'Email : '. $user->email ."\n";
+                    $msg .= 'Telepon : '. $user->telepon ."\n";
+                    $msg .= 'Kuota : '. (isset($user->user_dropshiper->saldo) ? number_format($user->user_dropshiper->saldo) : 0) ."\n";
+                    $msg .= 'Kuota Terpakai : '. (isset($user->user_dropshiper->saldo_terpakai) ? number_format($user->user_dropshiper->saldo_terpakai) : 0) ."\n";
+                    $msg .= "Simpanan Wajib : 0 \n";
+                    $msg .= "Simpanan Sukarela : 0 \n";
+                    $msg .= "Simpanan Pokok : 0 \n";
+                    $msg .= "===============================\n";
+                    
+                    $result = ApiWhaCurl($data->from ,$msg);
                 }
                 else
                 {
-                    ApiWhaCurl($data->from, 'Maaf, Kode validasi anggota harus diisi. Format PROFIL.<kodevalidasi>');
+                    $result = ApiWhaCurl($data->from, 'Maaf, No Anggota tidak ditemukan.');
                 }
             }
         } 
+        elseif(!(strpos(strtoupper($data->text), "INVOICE")===false))
+        {
+            $invoice = \Kodami\Models\Mysql\PInvoice::where('status', 1)->get();
+            if(count($invoice) > 0)
+            {
+                $msg = "#################################\n";
+                $msg .= 'BERIKUT INVOICE YANG BELUM LUNAS'."\n";
+                $msg .= "#################################\n";
+                foreach($invoice as $item)
+                {
+                    if(!isset($item->user->no_anggota)) continue;
 
-    }elseif ($data->event=="MESSAGEPROCESSED") { 
+                    $msg .= "===============================\n";
+                    $msg .= 'No Anggota : '. $item->user->no_anggota ."\n";
+                    $msg .= 'Nama : '. $item->user->name ."\n";
+                    $msg .= "No Invoice : ". $item->no_invoice ." \n";
+                    $msg .= "Nominal : ". number_format($item->nominal) ." \n";
+                    $msg .= "Tanggal : ". date('d F Y', strtotime($item->created_at)) ." \n";
+                }
+                $msg .= "===============================\n";
+                $result = ApiWhaCurl($data->from ,$msg);
+            }
+            else
+            {
+                $result = ApiWhaCurl($data->from, 'Maaf, Tidak ada invoice..');
+            }
+        }
+        elseif(!(strpos(strtoupper($data->text), "KATALOG")===false))
+        {
+            $result = ApiWhaCurl($data->from, 'https://www.pulsa.kodami.id/katalog/katalog-2018-12-07.pdf');
+        }
+        elseif(!(strpos(strtoupper($data->text), "KODAMI")===false))
+        {
+            $msg = 'Koperasi Daya Masyarakat Indonesia, merupakan salah satu koperasi produsen yang modern, bekerja dengan memberdayakan masyarakat Indonesia dalam rangka menjadi pelaku ekonomi yang tangguh dan profesional, dengan mengembangkan sistem ekonomi kerakyatan yang bertumpu pada mekanisme pasar yang berkeadilan, dengan suatu tujuan untuk Indonesia yang lebih baik. Layanan Kodami berupa penjualan offline dan online didukung armada kuper (kurir koperasi) dan eskop (ekspedisi koperasi) yang akan membantu masyarakat untuk kemudahan bertransaksi dengan harga yang lebih kompetitif.';
+            $result = ApiWhaCurl($data->from, 'http://kodami.co.id/logo.png');
+            $result = ApiWhaCurl($data->from, $msg);
+        }
+        else
+        {
+            $result = ApiWhaCurl($data->from, 'Maaf, Format "'. $data->text .'" tidak ditemukan.'); 
+        }
+    }
 
-      /* Here, you can do whatever you want */ 
-
-    }elseif ($data->event=="MESSAGEFAILED") { 
-
-      /* Here, you can do whatever you want */ 
-
-    } 
-
-
+    return $result;
 });
 
 // PULSA

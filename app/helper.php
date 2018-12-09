@@ -5,10 +5,14 @@
  */
 function ApiWhaCurl($number, $message)
 {
+  $message = 'text='. urlencode($message);
+
+  $url = "https://panel.apiwha.com/send_message.php?apikey=". env('APIWHA_TOKEN') ."&number=". $number ."&".$message;
+  
   $curl = curl_init();
 
   curl_setopt_array($curl, array(
-    CURLOPT_URL => "https://panel.apiwha.com/send_message.php?apikey=". env('APIWHA_TOKEN') ."&number=". $number ."&text=". $message,
+    CURLOPT_URL => $url,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_ENCODING => "",
     CURLOPT_MAXREDIRS => 10,
