@@ -166,6 +166,7 @@ class IndexController extends ApiController
                             # calcalulate kuota
                             $user                       = UserAnggota::where('user_id', $pulsa->user_id)->first();
                             $user->kuota                = $user->kuota + $pulsa->harga_beli; 
+                            $user->kuota_terpakai       = $user->kuota_terpakai - $pulsa->harga_beli; 
                             $user->save();
                         }
                     }
@@ -273,6 +274,7 @@ class IndexController extends ApiController
                             {
                                 $kuota_sementara->transaksi_gagal      = (Int)$kuota_sementara->transaksi_gagal + 1;
                                 $kuota_sementara->saldo                = (Int)$kuota_sementara->saldo + $pulsa->harga_beli;
+                                $kuota_sementara->total_nominal        = (Int)$kuota_sementara->total_nominal + $pulsa->harga_beli;
                             }
                         }
                         else
