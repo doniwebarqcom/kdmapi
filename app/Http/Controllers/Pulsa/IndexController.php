@@ -181,16 +181,15 @@ class IndexController extends ApiController
                 # send notifikasi
                 if(isset($pulsa->user->telepon))
                 {
-                    $msg = "##############################\n";
+                    $msg = "";
                     if(isset($pulsa->pulsa->jenis_paket))
                     {
-                        $msg .= "*TRANSAKSI ". $pulsa->pulsa->jenis_paket ."*\n";
+                        $msg .= "*TRANSAKSI ". $pulsa->pulsa->jenis_paket ."*\n\n";
                     }
                     elseif($pulsa->pulsa->jenis_product)
                     {
-                        $msg .= "*TRANSAKSI ". $pulsa->pulsa->jenis_product ."*\n";
+                        $msg .= "*TRANSAKSI ". $pulsa->pulsa->jenis_product ."*\n\n";
                     }
-                    $msg .= "##############################\n";
                     
                     $msg .= "No Transaksi :". $pulsa->no_invoice ."\n";
                     if($pulsa->pulsa->simko_provider_id==6 || $pulsa->pulsa->jenis_product == "PLN PASCABAYAR")
@@ -253,7 +252,6 @@ class IndexController extends ApiController
                     }
                     
                     $msg .= "Tanggal ". date('d F Y H:i:s', strtotime($pulsa->created_at)). "\n";
-                    $msg .= "================================\n";
                     
                     ApiWhaCurl($pulsa->user->telepon, $msg);    
                 }
@@ -433,16 +431,15 @@ class IndexController extends ApiController
                 # send notifikasi
                 if(isset($pulsa->user->telepon))
                 {
-                    $msg = "##############################\n";
+                    $msg = "";
                     if(isset($pulsa->pulsa->jenis_paket))
                     {
-                        $msg .= "*TRANSAKSI ". $pulsa->pulsa->jenis_paket ."*\n";
+                        $msg .= "*TRANSAKSI ". $pulsa->pulsa->jenis_paket ."*\n\n";
                     }
                     elseif($pulsa->pulsa->jenis_product)
                     {
-                        $msg .= "*TRANSAKSI ". $pulsa->pulsa->jenis_product ."*\n";
+                        $msg .= "*TRANSAKSI ". $pulsa->pulsa->jenis_product ."*\n\n";
                     }
-                    $msg .= "##############################\n";
                     
                     $msg .= "No Transaksi :". $pulsa->no_invoice ."\n";
 
@@ -506,7 +503,6 @@ class IndexController extends ApiController
                     }
                     
                     $msg .= "Tanggal ". date('d F Y H:i:s', strtotime($pulsa->created_at)). "\n";
-                    $msg .= "================================\n";
 
                     ApiWhaCurl($pulsa->user->telepon, $msg);    
                 }
