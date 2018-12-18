@@ -40,7 +40,22 @@ $router->post('apiwha', function(Illuminate\Http\Request $request){
     { 
         $result = ApiWhaCurl($data->from, '"'. $data->text .'" sedang diproses...');
 
-        if(!(strpos(strtoupper($data->text), "LIST")===false))
+        if(!(strpos(strtoupper($data->text), "TRANSAKSI")===false))
+        {
+            $msg = "TRANSAKSI\n";
+            $msg .= "===============================\n";
+            $msg .= "1 = Pulsa\n";
+            $msg .= "2 = Paket Data\n";
+            $msg .= "3 = Token PLN Reguler \n";
+            $msg .= "4 = Token PLN Berlangganan \n";
+            $msg .= "5 = Tagihan PLN \n";
+            $msg .= "6 = BPJS Kesehatan \n";
+            $msg .= "7 = Tagihan Air \n";
+            $msg .= "===============================\n";
+
+            $result = ApiWhaCurl($data->from, $msg);
+        }
+        elseif(!(strpos(strtoupper($data->text), "LIST")===false))
         {
             $msg = "LIST FUNGSI\n";
             $msg .= "===============================\n";
