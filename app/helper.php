@@ -2,10 +2,14 @@
 
 /**
  * API WHA CURL
- */
+ */ 
 function ApiWhaCurl($number, $message)
 {
+  $message = $message ."\n\n _Kami melindungi penggunaan data dan infomasi penting para pengguna aplikasi Kodami. Harap tidak membalas pesan ini, karena pesan ini dikirimkan secara otomatis oleh sistem.Jika ada pertanyaan lebih lanjut, silahkan menghubungi Customer Service kami._";
+
   $message = 'text='. urlencode($message);
+  
+  $number = str_replace_first('0','62', $number);
 
   $url = "https://panel.apiwha.com/send_message.php?apikey=". env('APIWHA_TOKEN') ."&number=". $number ."&".$message;
   
