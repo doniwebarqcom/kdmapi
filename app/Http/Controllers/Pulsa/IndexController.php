@@ -177,6 +177,83 @@ class IndexController extends ApiController
                     $kuota_sementara->save();
                 }
                 $pulsa->save();
+
+                # send notifikasi
+                if(isset($pulsa->user->telepon))
+                {
+                    $msg = '';
+                    if(isset($pulsa->pulsa->jenis_paket))
+                    {
+                        $msg .= "*". $pulsa->pulsa->jenis_paket ."*\n";
+                    }
+                    elseif($pulsa->pulsa->jenis_product)
+                    {
+                        $msg .= "*". $pulsa->pulsa->jenis_product ."*\n";
+                    }
+                       
+                    if($pulsa->pulsa->simko_provider_id==6 || $pulsa->pulsa->jenis_product == "PLN PASCABAYAR")
+                    {
+                        $msg .= 'No Meter/ID Pel ';
+                    }
+                    else
+                    {
+                        $msg .= 'Phone ';
+                    }
+                    $msg .= $pulsa->no_telepon ."\n";
+
+                    if($pulsa->pulsa->jenis_product != "PLN PASCABAYAR")
+                    {
+                        $msg .= 'Harga Rp. '. number_format($pulsa->harga_beli) ."\n";
+                    }
+                   
+                    $msg .= 'Status ';
+
+                    switch($pulsa->status)
+                    {
+                        case(0):
+                           $msg .= "Menunggu Pembayaran (Pending) \n";
+                            break;
+                        case(1):
+                            $msg .= "Sedang Di proses\n";
+                           break;
+                       case(4):
+                           $msg .= "Sedang Di proses\n";
+                           break;
+                        case(2):
+                           $msg .= "Sukses\n";
+                           break;
+                       case(3):
+                            $msg .="Gagal ". $pulsa->simko_message ."\n";
+                         break;
+                       default: 
+                           $msg .= "Blank \n";
+                        break;
+                    }
+
+                    if($pulsa->pulsa->jenis_product == "PLN PASCABAYAR")
+                    {
+                        $msg .= "Nama ". (isset($pulsa->plnPascabayar->nama) ? $pulsa->plnPascabayar->nama : '') ."\n";
+                        $msg .= "Tarif / Daya ". (isset($pulsa->plnPascabayar->tarif_daya) ? $pulsa->plnPascabayar->tarif_daya : '') ."\n";
+                        $msg .= "Periode ". (isset($pulsa->plnPascabayar->periode) ? parsing_pln_periode($pulsa->plnPascabayar->periode) : ''). "\n";
+                        $msg .= "Denda ". (isset($pulsa->plnPascabayar->denda) ? $pulsa->plnPascabayar->denda : '') ."\n";
+                        $msg .= "Tagihan PLN ". (isset($pulsa->plnPascabayar->tagihan) ? number_format($pulsa->plnPascabayar->tagihan) : '') ."\n";
+                        $msg .= "Biaya Admin ". (isset($pulsa->plnPascabayar->biaya_admin) ? number_format($pulsa->plnPascabayar->biaya_admin) : ''). "\n";
+                        $msg .= "Cashback ". (isset($pulsa->plnPascabayar->cashback) ? number_format($pulsa->plnPascabayar->cashback) : '') ."\n";
+                        $msg .= "Total Dibayarkan ". number_format($pulsa->harga_beli) ."\n";
+                    }
+
+                    if($pulsa->status == 2 and $pulsa->pulsa->simko_provider_id==6 and $pulsa->pulsa->jenis_product != "PLN PASCABAYAR")
+                    {
+                        $msg .= "Nama ". (isset($pulsa->plnToken->nama) ? $pulsa->plnToken->nama : '') ."\n";
+                        $msg .= "Tarif / Daya ". (isset($pulsa->plnToken->volt) ? $pulsa->plnToken->volt : ''). "\n";
+                        $msg .= "Jumlah KWH ". (isset($pulsa->plnToken->jumlah_kwh) ? $pulsa->plnToken->jumlah_kwh : ''). "\n";
+                        $msg .= "Stroom / Token *" . ltrim(isset($pulsa->plnToken->token) ? $pulsa->plnToken->token : ''). "* \n";
+                    }
+                    
+                    $msg .= "Tanggal ". date('d F Y H:i:s', strtotime($pulsa->created_at)). "\n";
+                   
+                    ApiWhaCurl($pulsa->user->telepon, $msg);    
+                }
             }
         }
 
@@ -224,7 +301,7 @@ class IndexController extends ApiController
                 {
                     $pulsa->status              = 2;
 
-                   # jika token listrik
+                    # jika token listrik
                     if(isset($pulsa->pulsa->simko_provider_id) and $pulsa->pulsa->simko_provider_id == 6)
                     {
                         $msg_token = parsingMessagePln($_GET['message']);
@@ -264,6 +341,14 @@ class IndexController extends ApiController
                 else
                 {
                     $pulsa->status              = 3;
+
+                    if(isset($pulsa->user->telepon))
+                    {
+                        $msg = "";
+                        
+                        ApiWhaCurl($pulsa->user->telepon, $msg);    
+                    }
+
 
                     # jika akses sebagai dropshiper
                     if($pulsa->user->access_id == 7)
@@ -341,6 +426,83 @@ class IndexController extends ApiController
                     $kuota_sementara->save();
                 }
                 $pulsa->save();
+
+                # send notifikasi
+                if(isset($pulsa->user->telepon))
+                {
+                    $msg = '';
+                    if(isset($pulsa->pulsa->jenis_paket))
+                    {
+                        $msg .= "*". $pulsa->pulsa->jenis_paket ."*\n";
+                    }
+                    elseif($pulsa->pulsa->jenis_product)
+                    {
+                        $msg .= "*". $pulsa->pulsa->jenis_product ."*\n";
+                    }
+                       
+                    if($pulsa->pulsa->simko_provider_id==6 || $pulsa->pulsa->jenis_product == "PLN PASCABAYAR")
+                    {
+                        $msg .= 'No Meter/ID Pel ';
+                    }
+                    else
+                    {
+                        $msg .= 'Phone ';
+                    }
+                    $msg .= $pulsa->no_telepon ."\n";
+
+                    if($pulsa->pulsa->jenis_product != "PLN PASCABAYAR")
+                    {
+                        $msg .= 'Harga Rp. '. number_format($pulsa->harga_beli) ."\n";
+                    }
+                   
+                    $msg .= 'Status ';
+
+                    switch($pulsa->status)
+                    {
+                        case(0):
+                           $msg .= "Menunggu Pembayaran (Pending) \n";
+                            break;
+                        case(1):
+                            $msg .= "Sedang Di proses\n";
+                           break;
+                       case(4):
+                           $msg .= "Sedang Di proses\n";
+                           break;
+                        case(2):
+                           $msg .= "Sukses\n";
+                           break;
+                       case(3):
+                            $msg .="Gagal ". $pulsa->simko_message ."\n";
+                         break;
+                       default: 
+                           $msg .= "Blank \n";
+                        break;
+                    }
+
+                    if($pulsa->pulsa->jenis_product == "PLN PASCABAYAR")
+                    {
+                        $msg .= "Nama ". (isset($pulsa->plnPascabayar->nama) ? $pulsa->plnPascabayar->nama : '') ."\n";
+                        $msg .= "Tarif / Daya ". (isset($pulsa->plnPascabayar->tarif_daya) ? $pulsa->plnPascabayar->tarif_daya : '') ."\n";
+                        $msg .= "Periode ". (isset($pulsa->plnPascabayar->periode) ? parsing_pln_periode($pulsa->plnPascabayar->periode) : ''). "\n";
+                        $msg .= "Denda ". (isset($pulsa->plnPascabayar->denda) ? $pulsa->plnPascabayar->denda : '') ."\n";
+                        $msg .= "Tagihan PLN ". (isset($pulsa->plnPascabayar->tagihan) ? number_format($pulsa->plnPascabayar->tagihan) : '') ."\n";
+                        $msg .= "Biaya Admin ". (isset($pulsa->plnPascabayar->biaya_admin) ? number_format($pulsa->plnPascabayar->biaya_admin) : ''). "\n";
+                        $msg .= "Cashback ". (isset($pulsa->plnPascabayar->cashback) ? number_format($pulsa->plnPascabayar->cashback) : '') ."\n";
+                        $msg .= "Total Dibayarkan ". number_format($pulsa->harga_beli) ."\n";
+                    }
+
+                    if($pulsa->status == 2 and $pulsa->pulsa->simko_provider_id==6 and $pulsa->pulsa->jenis_product != "PLN PASCABAYAR")
+                    {
+                        $msg .= "Nama ". (isset($pulsa->plnToken->nama) ? $pulsa->plnToken->nama : '') ."\n";
+                        $msg .= "Tarif / Daya ". (isset($pulsa->plnToken->volt) ? $pulsa->plnToken->volt : ''). "\n";
+                        $msg .= "Jumlah KWH ". (isset($pulsa->plnToken->jumlah_kwh) ? $pulsa->plnToken->jumlah_kwh : ''). "\n";
+                        $msg .= "Stroom / Token  *" . ltrim(isset($pulsa->plnToken->token) ? $pulsa->plnToken->token : ''). "* \n";
+                    }
+                    
+                    $msg .= "Tanggal ". date('d F Y H:i:s', strtotime($pulsa->created_at)). "\n";
+                   
+                    ApiWhaCurl($pulsa->user->telepon, $msg);    
+                }
             }
         }
 
