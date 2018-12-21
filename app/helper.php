@@ -7,9 +7,9 @@ function ApiWhaCurl($number, $message, $signature=true)
 {
   if($signature)
   {
-    $message = $message ."\n\n _Kami melindungi penggunaan data dan infomasi penting para pengguna aplikasi Kodami. Harap tidak membalas pesan ini, karena pesan ini dikirimkan secara otomatis oleh sistem.Jika ada pertanyaan lebih lanjut, silahkan menghubungi Customer Service kami._";
+    $message = $message ."\n\n _Kami melindungi data dan infomasi penting para pengguna aplikasi Kodami. Harap tidak membalas pesan ini, karena dikirimkan secara otomatis oleh sistem. Jika ada pertanyaan lebih lanjut, silahkan menghubungi Customer Service._";
   }
-  
+
   $message = 'text='. urlencode($message);
   
   $number = str_replace_first('0','62', $number);
