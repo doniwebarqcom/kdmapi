@@ -343,14 +343,6 @@ class IndexController extends ApiController
                 {
                     $pulsa->status              = 3;
 
-                    if(isset($pulsa->user->telepon))
-                    {
-                        $msg = "";
-                        
-                        ApiWhaCurl($pulsa->user->telepon, $msg);    
-                    }
-
-
                     # jika akses sebagai dropshiper
                     if($pulsa->user->access_id == 7)
                     {
@@ -417,6 +409,7 @@ class IndexController extends ApiController
                             # calcalulate kuota
                             $user                       = UserAnggota::where('user_id', $pulsa->user_id)->first();
                             $user->kuota                = $user->kuota + $pulsa->harga_beli; 
+                            $user->kuota_terpakai       = $user->kuota_terpakai - $pulsa->harga_beli;
                             $user->save();
                         }
                     }   

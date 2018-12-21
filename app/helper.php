@@ -10,7 +10,8 @@ function ApiWhaCurl($number, $message)
   $message = 'text='. urlencode($message);
   
   $number = str_replace_first('0','62', $number);
-
+  $number = str_replace('-', '', $number);
+  
   $url = "https://panel.apiwha.com/send_message.php?apikey=". env('APIWHA_TOKEN') ."&number=". $number ."&".$message;
   
   $curl = curl_init();
