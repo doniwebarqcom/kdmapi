@@ -39,7 +39,7 @@ $router->post('apiwha', function(Illuminate\Http\Request $request){
     // When you receive a message an INBOX event is created 
     if ($data->event=="INBOX") 
     { 
-        $result = ApiWhaCurl($data->from, '"'. $data->text .'" sedang diproses...');
+        $result = ApiWhaCurl($data->from, '"'. $data->text .'" sedang diproses...', false);
 
         if(!(strpos(strtoupper($data->text), "TRANSAKSI")===false))
         {
@@ -54,7 +54,7 @@ $router->post('apiwha', function(Illuminate\Http\Request $request){
             $msg .= "7 = Tagihan Air \n";
             $msg .= "===============================\n";
 
-            $result = ApiWhaCurl($data->from, $msg);
+            $result = ApiWhaCurl($data->from, $msg, false);
         }
         elseif(!(strpos(strtoupper($data->text), "LIST")===false))
         {
@@ -66,7 +66,7 @@ $router->post('apiwha', function(Illuminate\Http\Request $request){
             $msg .= "\"KODAMI\" untuk mengetahui profil Koperasi Kodami.\n";
             $msg .= "===============================\n";
 
-            $result = ApiWhaCurl($data->from, $msg);
+            $result = ApiWhaCurl($data->from, $msg, false);
         }
         elseif(!(strpos(strtoupper($data->text), "PROFIL")===false))
         {
@@ -74,7 +74,7 @@ $router->post('apiwha', function(Illuminate\Http\Request $request){
             
             if(!isset($param[1]))
             {
-                $result = ApiWhaCurl($data->from, 'Maaf, No Anggota harus diisi. Format "PROFIL.<noanggota>"');
+                $result = ApiWhaCurl($data->from, 'Maaf, No Anggota harus diisi. Format "PROFIL.<noanggota>"', false);
             }
             else
             {
@@ -94,11 +94,11 @@ $router->post('apiwha', function(Illuminate\Http\Request $request){
                     $msg .= "Simpanan Pokok : 0 \n";
                     $msg .= "===============================\n";
                     
-                    $result = ApiWhaCurl($data->from ,$msg);
+                    $result = ApiWhaCurl($data->from ,$msg, false);
                 }
                 else
                 {
-                    $result = ApiWhaCurl($data->from, 'Maaf, No Anggota tidak ditemukan.');
+                    $result = ApiWhaCurl($data->from, 'Maaf, No Anggota tidak ditemukan.', false);
                 }
             }
         } 
@@ -122,16 +122,16 @@ $router->post('apiwha', function(Illuminate\Http\Request $request){
                     $msg .= "Tanggal : ". date('d F Y', strtotime($item->created_at)) ." \n";
                 }
                 $msg .= "===============================\n";
-                $result = ApiWhaCurl($data->from ,$msg);
+                $result = ApiWhaCurl($data->from ,$msg, false);
             }
             else
             {
-                $result = ApiWhaCurl($data->from, 'Maaf, Tidak ada invoice..');
+                $result = ApiWhaCurl($data->from, 'Maaf, Tidak ada invoice..', false);
             }
         }
         elseif(!(strpos(strtoupper($data->text), "KATALOG")===false))
         {
-            $result = ApiWhaCurl($data->from, 'https://www.pulsa.kodami.id/katalog/katalog-2018-12-07.pdf');
+            $result = ApiWhaCurl($data->from, 'https://www.pulsa.kodami.id/katalog/katalog-2018-12-07.pdf', false);
         }
         elseif(!(strpos(strtoupper($data->text), "KODAMI")===false))
         {
@@ -141,7 +141,7 @@ $router->post('apiwha', function(Illuminate\Http\Request $request){
         }
         else
         {
-            $result = ApiWhaCurl($data->from, 'Maaf, Format "'. $data->text .'" tidak ditemukan.'); 
+            $result = ApiWhaCurl($data->from, 'Maaf, Format "'. $data->text .'" tidak ditemukan.', false); 
         }
     }
 
