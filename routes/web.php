@@ -41,7 +41,7 @@ $router->post('apiwha', function(Illuminate\Http\Request $request){
     { 
         $result = ApiWhaCurl($data->from, '"'. $data->text .'" sedang diproses...', false);
 
-        if((strpos(strtoupper($data->text), "TRANSAKSI")===false) || (strpos(strtoupper($data->text), "LIST")===false))
+        if((strpos(strtoupper($data->text), "TRANSAKSI")===true) || (strpos(strtoupper($data->text), "LIST")===true))
         {
             $result = ApiWhaCurl($data->from, 'Maaf anda tidak bisa membalas pesan ini.', false);
 
