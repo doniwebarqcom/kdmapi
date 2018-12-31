@@ -31,7 +31,7 @@ $router->post('curl-test', function (Illuminate\Http\Request $request){
 // APIWHA
 $router->post('apiwha', function(Illuminate\Http\Request $request){
 
-    #return false; exit;
+    return false; exit;
     // This is your webhook. You must configure it in the number settings section. 
     $result = '';
     $data = json_decode($request->data); 
